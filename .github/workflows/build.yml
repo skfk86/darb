@@ -1,0 +1,68 @@
+name: Build APK — درب
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync web assets
+        run: npx cap sync android
+
+      - name: Patch AndroidManifest
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i '/<manifest /a\    <uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />' $M
+          sed -i 's/android:usesCleartextTraffic="false"/android:usesCleartextTraffic="true"/' $M
+          sed -i 's/android:label="@string\/app_name"/android:label="درب"/' $M
+
+      - name: Set minSdk to 23
+        run: sed -i 's/minSdkVersion = .*/minSdkVersion = 23/' android/variables.gradle || true
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: darb-v${{ github.run_number }}
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Summary
+        run: |
+          SIZE=$(du -sh android/app/build/outputs/apk/debug/app-debug.apk | cut -f1)
+          echo "## ✅ درب — APK جاهز" >> $GITHUB_STEP_SUMMARY
+          echo "| الحقل | القيمة |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 الحجم | $SIZE |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔢 Build | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📱 Android | 6.0+ (API 23) |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⬇️ حمّل من **Artifacts** أعلاه" >> $GITHUB_STEP_SUMMARY

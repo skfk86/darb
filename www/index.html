@@ -1,0 +1,2459 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4A1F72">
+<title>درب</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ══════════════════════════════════════
+   VARIABLES & RESET
+══════════════════════════════════════ */
+:root{
+  --p:#6B2FA0; --pl:#9B59D0; --pd:#3D1A6E;
+  --m:#8B1A3A; --ml:#B52050;
+  --g1:linear-gradient(135deg,var(--pd),var(--p));
+  --g2:linear-gradient(135deg,var(--m),var(--ml));
+  --g3:linear-gradient(135deg,var(--pd),var(--m));
+  --white:#fff; --bg:#F4F0FB; --card:#fff;
+  --b1:#EDE6F8; --b2:#D8CEED;
+  --t1:#16052E; --t2:#4A3570; --t3:#8B7AAA;
+  --ok:#22C55E; --err:#EF4444; --warn:#F59E0B;
+  --nav:64px; --r:16px; --rL:22px; --rS:10px;
+  --sh:0 4px 20px rgba(107,47,160,.12);
+  --sh2:0 2px 8px rgba(107,47,160,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1)}
+i.fa-solid,i.fa-regular,i.fa-brands{line-height:1}
+
+/* ══════════════════════════════════════
+   VIEWS & ANIMATION
+══════════════════════════════════════ */
+.view{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;display:none;background:var(--bg);-webkit-overflow-scrolling:touch}
+.view.active{display:block;animation:fadeUp .2s ease}
+.view.has-nav{bottom:var(--nav)}
+/* #ai display مُدار بالكامل عبر JS inline styles — لا CSS classes */
+@keyframes fadeUp{from{opacity:.5;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes blink{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+/* ══════════════════════════════════════
+   BOTTOM NAV
+══════════════════════════════════════ */
+#bnav{
+  position:fixed;bottom:0;left:0;right:0;height:var(--nav);
+  background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--b1);
+  display:none;justify-content:space-around;align-items:center;
+  z-index:200;padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -4px 30px rgba(107,47,160,.1)
+}
+#bnav.on{display:flex}
+.nb{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  flex:1;padding:6px 0;background:none;border:none;
+  font-family:'Cairo',sans-serif;cursor:pointer;position:relative;
+  transition:all .2s
+}
+.nb .ni{font-size:21px;color:var(--t3);transition:all .25s;display:block}
+.nb .nl{font-size:10px;color:var(--t3);font-weight:600;transition:all .25s}
+.nb.active .ni{color:var(--p);transform:translateY(-2px)}
+.nb.active .nl{color:var(--p);font-weight:800}
+.nb.active::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:36px;height:3px;
+  background:var(--g1);border-radius:0 0 6px 6px
+}
+
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
+.btn{
+  width:100%;padding:15px;border:none;border-radius:var(--r);
+  font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  gap:8px;transition:all .2s;letter-spacing:.2px
+}
+.btn:active{transform:scale(.97);opacity:.9}
+.btn-p{background:var(--g1);color:#fff;box-shadow:0 4px 16px rgba(107,47,160,.35)}
+.btn-p:active{box-shadow:0 2px 8px rgba(107,47,160,.25)}
+.btn-m{background:var(--g2);color:#fff;box-shadow:0 4px 16px rgba(139,26,58,.3)}
+.btn-s{background:var(--b1);color:var(--t1)}
+.btn-o{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.35);color:#fff;backdrop-filter:blur(10px)}
+.btn-w{background:#fff;color:var(--pd);box-shadow:var(--sh)}
+.btn-sm{padding:10px 20px;font-size:13px;width:auto;border-radius:var(--rS)}
+
+/* ══════════════════════════════════════
+   INPUTS
+══════════════════════════════════════ */
+.ig{margin-bottom:18px;position:relative}
+.ig label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--t2);margin-bottom:7px}
+.ig label i{color:var(--p);font-size:14px}
+.ig input{
+  width:100%;padding:14px 16px;
+  background:var(--b1);border:2px solid transparent;
+  border-radius:var(--r);font-family:'Cairo',sans-serif;
+  font-size:14px;color:var(--t1);outline:none;transition:all .2s
+}
+.ig input:focus{border-color:var(--p);background:#fff;box-shadow:0 0 0 4px rgba(107,47,160,.08)}
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+#toast{
+  position:fixed;bottom:80px;left:16px;right:16px;
+  padding:13px 18px;border-radius:var(--r);
+  font-size:14px;font-weight:700;text-align:center;
+  z-index:999;display:none;
+  box-shadow:0 6px 24px rgba(0,0,0,.18);
+  display:none;animation:fadeUp .3s ease
+}
+#toast.err{background:var(--err);color:#fff}
+#toast.ok{background:var(--ok);color:#fff}
+
+/* ══════════════════════════════════════
+   LOADER
+══════════════════════════════════════ */
+.ld{display:inline-block;width:20px;height:20px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+
+/* ══════════════════════════════════════
+   SPLASH
+══════════════════════════════════════ */
+#splash{
+  background:var(--g3);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px
+}
+.sp-logo{width:90px;height:90px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:28px;display:flex;align-items:center;justify-content:center}
+.sp-logo i{font-size:44px;color:#fff}
+.sp-title{font-size:30px;font-weight:900;color:#fff;letter-spacing:-.5px}
+.sp-sub{font-size:14px;color:rgba(255,255,255,.7)}
+.sp-dots{display:flex;gap:10px;margin-top:40px}
+.sp-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);animation:pulse 1.4s infinite}
+.sp-dot:nth-child(2){animation-delay:.25s}.sp-dot:nth-child(3){animation-delay:.5s}
+
+/* ══════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════ */
+#onboarding{
+  background:var(--g3);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:44px 28px;gap:20px;text-align:center
+}
+.ob-logo{width:100px;height:100px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:30px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.ob-logo i{font-size:48px;color:#fff}
+.ob-title{font-size:32px;font-weight:900;color:#fff;line-height:1.25;letter-spacing:-.5px}
+.ob-title span{color:#FFD6E0}
+.ob-desc{font-size:14px;color:rgba(255,255,255,.82);line-height:1.85;max-width:300px}
+.ob-feats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ob-f{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:30px;padding:7px 14px;font-size:12px;font-weight:600;color:#fff;display:flex;align-items:center;gap:6px}
+.ob-f i{font-size:12px;opacity:.9}
+.ob-acts{width:100%;display:flex;flex-direction:column;gap:12px;max-width:320px}
+
+/* ══════════════════════════════════════
+   AUTH SCREENS
+══════════════════════════════════════ */
+.ah{background:var(--g1);padding:48px 28px 32px;text-align:center;color:#fff;position:relative}
+.ah::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:20px;background:var(--bg);border-radius:20px 20px 0 0}
+.ah-icon{width:70px;height:70px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.28);border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.ah-icon i{font-size:30px;color:#fff}
+.ah h2{font-size:22px;font-weight:900;letter-spacing:-.3px}
+.ah p{font-size:13px;color:rgba(255,255,255,.78);margin-top:5px}
+.ab{padding:20px 24px 28px}
+.as{text-align:center;margin-top:20px;font-size:13px;color:var(--t2)}
+.as a{color:var(--p);font-weight:800;cursor:pointer}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--t3);font-size:12px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+/* ══════════════════════════════════════
+   SCREEN HEADER
+══════════════════════════════════════ */
+.sh{padding:20px 18px 26px;color:#fff;position:relative}
+.sh::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:20px;background:var(--bg);border-radius:20px 20px 0 0}
+.sh-p{background:var(--g1)}.sh-m{background:var(--g2)}.sh-x{background:var(--g3)}.sh-d{background:linear-gradient(135deg,#1E0A3C,var(--pd))}
+.sh-bk{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(255,255,255,.15);border-radius:30px;cursor:pointer;margin-bottom:14px;font-size:13px;font-weight:600;transition:background .2s}
+.sh-bk:active{background:rgba(255,255,255,.25)}
+.sh-bk i{font-size:13px}
+.sh-t{font-size:20px;font-weight:900;letter-spacing:-.3px}
+.sh-s{font-size:13px;color:rgba(255,255,255,.75);margin-top:4px}
+
+/* ══════════════════════════════════════
+   HOME
+══════════════════════════════════════ */
+.hh{background:var(--g1);padding:20px 18px 36px;color:#fff;position:relative}
+.hh::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--bg);border-radius:24px 24px 0 0}
+.htb{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.htb .gr{font-size:12px;color:rgba(255,255,255,.7);font-weight:600}
+.htb .nm{font-size:18px;font-weight:800;letter-spacing:-.2px}
+.av{width:46px;height:46px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.28);border-radius:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.av:active{background:rgba(255,255,255,.3)}
+.av i{font-size:22px;color:#fff}
+.hpc{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-radius:var(--r);padding:16px;backdrop-filter:blur(16px)}
+.hpc-t{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.hpc-t .lb{font-size:12px;color:rgba(255,255,255,.82);font-weight:600}
+.hpc-t .pt{font-size:20px;font-weight:900}
+.pb{background:rgba(255,255,255,.2);border-radius:6px;height:8px;margin-bottom:10px;overflow:hidden}
+.pf{height:100%;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.8),#fff);transition:width .7s cubic-bezier(.4,0,.2,1)}
+.hpc-s{display:flex;gap:16px;font-size:11px;color:rgba(255,255,255,.78);font-weight:600}
+.hpc-s i{font-size:10px}
+.hb{padding:14px 16px 20px;margin-top:-4px}
+.st{font-size:13px;font-weight:800;color:var(--t2);margin:18px 0 10px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.5px}
+.st i{color:var(--p);font-size:12px}
+
+/* ══════════════════════════════════════
+   QUICK CARDS
+══════════════════════════════════════ */
+.qg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qc{
+  border-radius:var(--r);padding:18px 14px;
+  display:flex;flex-direction:column;gap:8px;
+  cursor:pointer;transition:all .2s;
+  position:relative;overflow:hidden
+}
+.qc::before{content:'';position:absolute;top:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)}
+.qc:active{transform:scale(.96)}
+.qc-p{background:var(--g1);color:#fff;box-shadow:0 6px 20px rgba(107,47,160,.3)}
+.qc-m{background:var(--g2);color:#fff;box-shadow:0 6px 20px rgba(139,26,58,.25)}
+.qc-i{background:linear-gradient(135deg,#1E0A3C,var(--pd));color:#fff;box-shadow:0 6px 20px rgba(62,26,110,.3)}
+.qc-w{background:#fff;color:var(--t1);border:1.5px solid var(--b1);box-shadow:var(--sh2)}
+.qc-ic{font-size:26px;margin-bottom:2px;display:block}
+.qc-tl{font-size:13px;font-weight:800}
+.qc-sb{font-size:11px;opacity:.8;font-weight:600}
+
+/* ══════════════════════════════════════
+   LESSON LIST ITEMS
+══════════════════════════════════════ */
+.li{
+  background:var(--card);border-radius:var(--r);padding:13px;
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;
+  border:1px solid var(--b1);cursor:pointer;
+  box-shadow:var(--sh2);transition:all .15s
+}
+.li:active{background:var(--b1)}
+.li-i{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.li-p{background:rgba(107,47,160,.1)}.li-p i{color:var(--p);font-size:18px}
+.li-m{background:rgba(139,26,58,.1)}.li-m i{color:var(--m);font-size:18px}
+.li-tl{font-size:13px;font-weight:700;color:var(--t1)}
+.li-sb{font-size:11px;color:var(--t3);margin-top:2px}
+.bd{margin-right:auto;font-size:9px;font-weight:800;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.bd-d{background:rgba(34,197,94,.12);color:var(--ok)}
+.bd-n{background:rgba(107,47,160,.1);color:var(--p)}
+.bd-l{background:var(--b1);color:var(--t3)}
+
+/* ══════════════════════════════════════
+   LESSONS CHAPTERS
+══════════════════════════════════════ */
+.cc{background:var(--card);border-radius:var(--r);margin:0 16px 12px;overflow:hidden;border:1px solid var(--b1);box-shadow:var(--sh2)}
+.ch{padding:15px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s}
+.ch:active{background:var(--b1)}
+.chn{
+  width:34px;height:34px;border-radius:10px;
+  background:var(--g1);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:800;flex-shrink:0
+}
+.chi{flex:1}
+.ch-t{font-size:14px;font-weight:800;color:var(--t1)}
+.ch-s{font-size:11px;color:var(--t3);margin-top:2px;font-weight:600}
+.ch-a{color:var(--t3);transition:transform .25s;font-size:12px}
+.cc.op .ch-a{transform:rotate(-90deg);color:var(--p)}
+.cl{display:none;border-top:1px solid var(--b1)}
+.cc.op .cl{display:block}
+.lr{padding:13px 15px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--b1);cursor:pointer;transition:background .15s}
+.lr:last-child{border-bottom:none}
+.lr-ic{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.lr-i{flex:1}
+.lr-t{font-size:13px;font-weight:700;color:var(--t1)}
+.lr-d{font-size:11px;color:var(--t3);margin-top:1px}
+.lr:active{background:var(--b1)}
+
+/* ══════════════════════════════════════
+   LESSON DETAIL
+══════════════════════════════════════ */
+.lc{padding:18px}
+.lc h3{font-size:18px;font-weight:900;color:var(--pd);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.lc p{font-size:14px;color:var(--t2);line-height:1.85;margin-bottom:14px}
+.lc strong{color:var(--t1);font-weight:700}
+.kc{display:flex;align-items:flex-start;gap:12px;background:var(--bg);border-radius:14px;padding:13px;margin-bottom:10px;border-right:3px solid var(--p)}
+.kc .ki{font-size:26px;flex-shrink:0;min-width:32px;text-align:center}
+.kc p{margin:0;font-size:13px;line-height:1.75}
+.kc.r{border-right-color:var(--err);background:rgba(239,68,68,.04)}
+.kc.y{border-right-color:var(--warn);background:rgba(245,158,11,.04)}
+.kc.g{border-right-color:var(--ok);background:rgba(34,197,94,.04)}
+.kc.b{border-right-color:#3B82F6;background:rgba(59,130,246,.04)}
+.kc.m{border-right-color:var(--m);background:rgba(139,26,58,.04)}
+.tip{
+  background:linear-gradient(135deg,rgba(107,47,160,.06),rgba(139,26,58,.04));
+  border:1px solid rgba(107,47,160,.14);border-radius:14px;
+  padding:13px 15px;margin:14px 0;font-size:13px;color:var(--t2);line-height:1.8;
+  display:flex;align-items:flex-start;gap:10px
+}
+.tip::before{content:'\f0eb';font-family:"Font Awesome 6 Free";font-weight:900;color:var(--warn);font-size:16px;flex-shrink:0;margin-top:2px}
+/* Quiz section */
+.qs{margin:0 16px 16px}
+.qt{font-size:16px;font-weight:900;color:var(--pd);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.qt i{color:var(--p)}
+.qq{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid var(--b1);box-shadow:var(--sh2)}
+.qq-t{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:12px;line-height:1.6}
+/* Option buttons */
+.ob{
+  width:100%;padding:13px 16px;
+  border:2px solid var(--b1);border-radius:12px;
+  background:var(--card);font-family:'Cairo',sans-serif;
+  font-size:13px;color:var(--t1);
+  cursor:pointer;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  transition:all .18s;text-align:right;
+  box-shadow:0 1px 4px rgba(0,0,0,.04)
+}
+.ob:active{transform:scale(.99)}
+.ob-txt{flex:1;text-align:right;font-weight:600}
+.od{font-size:17px;color:var(--b2);flex-shrink:0;transition:all .18s}
+.ob.sel{border-color:var(--p);background:rgba(107,47,160,.05);box-shadow:0 0 0 3px rgba(107,47,160,.08)}
+.ob.sel .ob-txt{color:var(--p);font-weight:800}
+.ob.sel .od{color:var(--p)}
+.ob.cor{border-color:var(--ok);background:rgba(34,197,94,.06)}
+.ob.cor .ob-txt{color:#16A34A;font-weight:800}
+.ob.cor .od{color:var(--ok)}
+.ob.wrg{border-color:var(--err);background:rgba(239,68,68,.05)}
+.ob.wrg .ob-txt{color:var(--err);font-weight:800}
+.ob.wrg .od{color:var(--err)}
+.ob:disabled{cursor:default}
+
+/* ══════════════════════════════════════
+   EXAM
+══════════════════════════════════════ */
+.eh{background:var(--g3);padding:18px 18px 26px;color:#fff;text-align:center;position:relative}
+.eh::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:20px;background:var(--bg);border-radius:20px 20px 0 0}
+.et{
+  font-size:36px;font-weight:900;
+  background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.25);
+  border-radius:16px;padding:8px 28px;
+  display:inline-block;margin:10px 0;
+  font-variant-numeric:tabular-nums;letter-spacing:2px
+}
+.epr{display:flex;align-items:center;gap:8px;margin-top:6px}
+.epb{flex:1;height:5px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden}
+.epf{height:100%;background:rgba(255,255,255,.85);border-radius:4px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+.epl{font-size:12px;color:rgba(255,255,255,.85);font-weight:700}
+.eb{padding:16px 16px 0}
+.eqc{
+  background:var(--card);border-radius:18px;padding:18px;
+  border:1px solid var(--b1);margin-bottom:12px;
+  box-shadow:var(--sh)
+}
+.eqi{
+  width:100%;height:100px;
+  background:linear-gradient(135deg,rgba(107,47,160,.07),rgba(139,26,58,.05));
+  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;border:1px solid rgba(107,47,160,.1)
+}
+.eqn{font-size:11px;color:var(--t3);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.eqt{font-size:15px;font-weight:800;color:var(--t1);margin-bottom:14px;line-height:1.6}
+.eqx{
+  background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);
+  border-radius:12px;padding:11px 14px;font-size:13px;
+  color:#16A34A;margin-top:12px;line-height:1.7;
+  display:flex;align-items:flex-start;gap:8px
+}
+.eqx i{flex-shrink:0;margin-top:2px;color:var(--warn)}
+.en{display:flex;gap:10px;padding:0 16px 16px}
+/* Exam Result */
+.rh{background:var(--g3);padding:48px 24px;text-align:center;color:#fff;position:relative}
+.rh::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--bg);border-radius:24px 24px 0 0}
+.ri{font-size:64px;margin-bottom:12px;display:block;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3))}
+.rs{font-size:60px;font-weight:900;letter-spacing:-2px}
+.rl{font-size:15px;color:rgba(255,255,255,.88);margin-top:4px;font-weight:600}
+.rb{padding:20px 16px}
+.rst{
+  background:var(--card);border-radius:var(--r);padding:16px;
+  display:flex;align-items:center;gap:14px;margin-bottom:10px;
+  border:1px solid var(--b1);box-shadow:var(--sh2)
+}
+.rs-ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.rs-ic.ok-bg{background:rgba(34,197,94,.1)}.rs-ic.ok-bg i{color:var(--ok)}
+.rs-ic.err-bg{background:rgba(239,68,68,.1)}.rs-ic.err-bg i{color:var(--err)}
+.rs-ic.p-bg{background:rgba(107,47,160,.1)}.rs-ic.p-bg i{color:var(--p)}
+.rs-l{font-size:12px;color:var(--t3);font-weight:600}
+.rs-v{font-size:20px;font-weight:900;color:var(--t1)}
+
+/* ══════════════════════════════════════
+   AI CHAT
+══════════════════════════════════════ */
+.aih{
+  background:linear-gradient(135deg,#1E0A3C,var(--pd));
+  padding:16px 18px;color:#fff;
+  display:flex;align-items:center;gap:14px;flex-shrink:0;
+  box-shadow:0 4px 20px rgba(62,26,110,.3)
+}
+.aia{
+  width:48px;height:48px;
+  background:linear-gradient(135deg,var(--pl),var(--ml));
+  border-radius:16px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;box-shadow:0 4px 12px rgba(107,47,160,.4)
+}
+.aia i{font-size:22px;color:#fff}
+.ain{font-size:16px;font-weight:800}
+.ais{font-size:11px;color:#86EFAC;display:flex;align-items:center;gap:5px;margin-top:2px;font-weight:600}
+.ais::before{content:'';width:7px;height:7px;border-radius:50%;background:#86EFAC;box-shadow:0 0 6px #86EFAC;animation:pulse .9s infinite}
+.cm{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px}
+.cm::-webkit-scrollbar{width:3px}.cm::-webkit-scrollbar-thumb{background:var(--b1);border-radius:4px}
+.maw{align-self:flex-start;display:flex;gap:8px;max-width:90%}
+.mad{
+  width:30px;height:30px;
+  background:var(--g1);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:4px
+}
+.mad i{font-size:13px;color:#fff}
+.ma{
+  background:var(--card);border-radius:4px 16px 16px 16px;
+  padding:11px 13px;border:1px solid var(--b1);
+  font-size:13px;color:var(--t1);line-height:1.75;
+  box-shadow:var(--sh2)
+}
+.mu{
+  align-self:flex-end;
+  background:var(--g1);
+  border-radius:16px 4px 16px 16px;
+  padding:11px 13px;color:#fff;font-size:13px;line-height:1.75;
+  max-width:82%;box-shadow:0 4px 12px rgba(107,47,160,.3)
+}
+.ty{display:flex;align-items:center;gap:5px;padding:10px 14px;background:var(--card);border-radius:14px;width:fit-content;border:1px solid var(--b1)}
+.tyd{width:7px;height:7px;background:var(--p);border-radius:50%;animation:blink 1.2s infinite}
+.tyd:nth-child(2){animation-delay:.2s}.tyd:nth-child(3){animation-delay:.4s}
+.cia{display:flex;gap:8px;padding:10px 14px;background:var(--card);border-top:1px solid var(--b1);flex-shrink:0}
+.ci{
+  flex:1;background:var(--b1);border:2px solid transparent;
+  border-radius:14px;padding:10px 14px;
+  font-family:'Cairo',sans-serif;font-size:13px;color:var(--t1);
+  outline:none;resize:none;max-height:80px;transition:all .2s
+}
+.ci:focus{border-color:var(--p);background:#fff}
+.sb{
+  width:44px;height:44px;
+  background:var(--g1);border:none;border-radius:13px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;box-shadow:0 4px 12px rgba(107,47,160,.3);
+  transition:all .2s
+}
+.sb:active{transform:scale(.93)}
+.sb i{font-size:16px;color:#fff}
+.sugg{display:flex;gap:8px;padding:8px 14px 2px;overflow-x:auto;flex-shrink:0}
+.sugg::-webkit-scrollbar{display:none}
+.sg{
+  white-space:nowrap;
+  background:rgba(107,47,160,.07);border:1.5px solid rgba(107,47,160,.15);
+  color:var(--p);border-radius:30px;padding:7px 15px;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;
+  transition:all .2s;flex-shrink:0
+}
+.sg:active{background:rgba(107,47,160,.15)}
+
+/* ══════════════════════════════════════
+   PROGRESS
+══════════════════════════════════════ */
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 0}
+.sc{
+  background:var(--card);border-radius:var(--r);padding:18px 14px;
+  border:1px solid var(--b1);text-align:center;box-shadow:var(--sh2)
+}
+.sc-ic{
+  width:48px;height:48px;border-radius:14px;
+  background:rgba(107,47,160,.1);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 10px
+}
+.sc-ic i{font-size:22px;color:var(--p)}
+.sc-v{font-size:26px;font-weight:900;color:var(--pd);letter-spacing:-1px}
+.sc-l{font-size:11px;color:var(--t3);margin-top:3px;font-weight:700}
+.ehi{
+  background:var(--card);border-radius:14px;padding:14px;
+  display:flex;align-items:center;gap:12px;margin-bottom:8px;
+  border:1px solid var(--b1);box-shadow:var(--sh2)
+}
+.ehs{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:900;flex-shrink:0
+}
+.sp-c{background:rgba(34,197,94,.1);color:var(--ok)}
+.fl-c{background:rgba(239,68,68,.1);color:var(--err)}
+.ehd{font-size:11px;color:var(--t3);font-weight:600}
+.ehv{font-size:13px;font-weight:700;color:var(--t1)}
+
+/* ══════════════════════════════════════
+   SUBSCRIPTION
+══════════════════════════════════════ */
+.subh{background:var(--g3);padding:36px 28px;text-align:center;color:#fff;position:relative}
+.subh::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--bg);border-radius:24px 24px 0 0}
+.subh-icon{width:80px;height:80px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.subh-icon i{font-size:36px;color:#fff}
+.pc{margin:10px 16px 0;background:var(--card);border-radius:var(--rL);padding:20px;border:2px solid var(--b1);box-shadow:var(--sh2)}
+.pc.ft{border-color:var(--p);box-shadow:0 8px 28px rgba(107,47,160,.18)}
+.pbg{
+  background:var(--g1);color:#fff;
+  font-size:10px;font-weight:800;padding:4px 12px;
+  border-radius:30px;display:inline-flex;align-items:center;gap:5px;
+  margin-bottom:12px
+}
+.pn{font-size:16px;font-weight:900;color:var(--t1)}
+.pp{font-size:28px;font-weight:900;color:var(--p);margin:6px 0;letter-spacing:-1px}
+.pp span{font-size:13px;font-weight:500;color:var(--t3);letter-spacing:0}
+.pfl{margin-top:14px;display:flex;flex-direction:column;gap:9px}
+.pfi{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2);font-weight:600}
+.pck{color:var(--ok);font-size:15px}.pcx{opacity:.35}
+.pcx i{color:var(--t3)}
+
+/* ══════════════════════════════════════
+   PROFILE
+══════════════════════════════════════ */
+.pfh{background:var(--g1);padding:36px 24px 28px;text-align:center;color:#fff;position:relative}
+.pfh::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--bg);border-radius:24px 24px 0 0}
+.pfa{
+  width:84px;height:84px;border-radius:26px;
+  background:rgba(255,255,255,.18);border:3px solid rgba(255,255,255,.35);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;box-shadow:0 4px 20px rgba(0,0,0,.15)
+}
+.pfa i{font-size:40px;color:rgba(255,255,255,.95)}
+.pfn{font-size:20px;font-weight:900;letter-spacing:-.3px}
+.pfe{font-size:13px;color:rgba(255,255,255,.7);margin-top:4px}
+.pfb{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:5px 16px;font-size:12px;font-weight:700}
+.pfm{padding:16px}
+.mi{
+  background:var(--card);border-radius:var(--r);
+  padding:15px 16px;display:flex;align-items:center;gap:12px;
+  margin-bottom:8px;border:1px solid var(--b1);cursor:pointer;
+  box-shadow:var(--sh2);transition:all .15s
+}
+.mi:active{background:var(--b1)}
+.mi-ic{width:40px;height:40px;border-radius:12px;background:rgba(107,47,160,.09);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mi-ic i{font-size:17px;color:var(--p)}
+.mi-l{font-size:14px;font-weight:700;color:var(--t1);flex:1}
+.mi-a{color:var(--t3);font-size:12px}
+.mi.dg .mi-ic{background:rgba(239,68,68,.09)}
+.mi.dg .mi-ic i,.mi.dg .mi-l{color:var(--err)}
+
+/* ══ CRITICAL FIXES ══ */
+
+/* Force option buttons to be full-width block in all containers */
+#e-opts { display:flex !important; flex-direction:column !important; gap:8px !important; }
+#e-opts .ob, .qq .ob {
+  display:flex !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  margin-bottom:0 !important;
+}
+
+/* Quiz questions container */
+#quiz-qs { display:flex; flex-direction:column; gap:0; }
+#quiz-qs .qq { display:block; }
+
+/* AI chat — مُدار بالكامل عبر JS + inline styles في HTML */
+
+/* Fix AI header RTL alignment */
+.aih { flex-direction:row-reverse; justify-content:flex-end; }
+.aih > div { text-align:right; }
+
+/* Fix exam icon - smaller and styled */
+.eqi {
+  height:80px !important;
+  border-radius:14px;
+  background:linear-gradient(135deg,rgba(107,47,160,.07),rgba(139,26,58,.05)) !important;
+}
+.eqi i, .eqi-icon { font-size:36px; color:var(--p); }
+
+/* Fix exam header title + timer layout */
+.eh { text-align:center; }
+.eh > div:first-child { font-size:15px; font-weight:800; opacity:.9; }
+.et { display:block; margin:8px auto; }
+
+/* Fix profile header - ensure centering */
+.pfh { display:flex; flex-direction:column; align-items:center; text-align:center; }
+.pfh .pfn, .pfh .pfe, .pfh .pfb { text-align:center; width:100%; }
+
+/* Fix lesson arrows in RTL */
+.ch-a { margin-right:auto; margin-left:0; }
+
+/* Fix back button */  
+.sh-bk { direction:rtl; }
+
+/* Ensure buttons don't go inline in any context */
+.ob { display:flex !important; }
+
+@keyframes tybounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- ① SPLASH -->
+<div id="splash" class="view active">
+  <div class="sp-logo"><i class="fa-solid fa-car"></i></div>
+  <div class="sp-title">درب</div>
+  <div class="sp-sub">طريقك لإتقان القيادة</div>
+  <div class="sp-dots"><div class="sp-dot"></div><div class="sp-dot"></div><div class="sp-dot"></div></div>
+</div>
+
+<!-- ② ONBOARDING -->
+<div id="onboarding" class="view">
+  <div class="ob-logo"><i class="fa-solid fa-car"></i></div>
+  <div class="ob-title">درب<br><span style="font-size:18px;font-weight:600;opacity:.85;">طريقك للقيادة</span></div>
+  <div class="ob-desc">منصتك الذكية لتعلّم قواعد المرور واجتياز اختبار القيادة بكل ثقة</div>
+  <div class="ob-feats">
+    <div class="ob-f"><i class="fa-solid fa-book-open"></i>دروس نظرية</div>
+    <div class="ob-f"><i class="fa-solid fa-bullseye"></i>محاكاة اختبار</div>
+    <div class="ob-f"><i class="fa-solid fa-robot"></i>ذكاء اصطناعي</div>
+    <div class="ob-f"><i class="fa-solid fa-chart-line"></i>تتبع التقدم</div>
+  </div>
+  <div class="ob-acts">
+    <button class="btn btn-w" onclick="showView('register')"><i class="fa-solid fa-user-plus"></i>إنشاء حساب جديد</button>
+    <button class="btn btn-o" onclick="showView('login')"><i class="fa-solid fa-right-to-bracket"></i>تسجيل الدخول</button>
+  </div>
+</div>
+
+<!-- ③ LOGIN -->
+<div id="login" class="view">
+  <div class="ah">
+    <div class="ah-icon"><i class="fa-solid fa-right-to-bracket"></i></div>
+    <h2>أهلاً بعودتك</h2><p>سجّل الدخول للمتابعة</p>
+  </div>
+  <div class="ab">
+    <div class="ig">
+      <label><i class="fa-solid fa-envelope"></i>البريد الإلكتروني</label>
+      <input type="email" id="le" placeholder="example@email.com" dir="ltr">
+    </div>
+    <div class="ig">
+      <label><i class="fa-solid fa-lock"></i>كلمة المرور</label>
+      <input type="password" id="lp" placeholder="••••••••" dir="ltr">
+    </div>
+    <button class="btn btn-p" id="lb" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket"></i>تسجيل الدخول</button>
+    <div class="as">ليس لديك حساب؟ <a onclick="showView('register')">إنشاء حساب</a></div>
+  </div>
+</div>
+
+<!-- ④ REGISTER -->
+<div id="register" class="view">
+  <div class="ah">
+    <div class="ah-icon"><i class="fa-solid fa-user-plus"></i></div>
+    <h2>إنشاء حساب جديد</h2><p>ابدأ رحلة تعلّم القيادة اليوم</p>
+  </div>
+  <div class="ab">
+    <div class="ig"><label><i class="fa-solid fa-user"></i>الاسم الكامل</label><input type="text" id="rn" placeholder="مثال: محمد أحمد"></div>
+    <div class="ig"><label><i class="fa-solid fa-envelope"></i>البريد الإلكتروني</label><input type="email" id="re" placeholder="example@email.com" dir="ltr"></div>
+    <div class="ig"><label><i class="fa-solid fa-lock"></i>كلمة المرور</label><input type="password" id="rp" placeholder="6 أحرف على الأقل" dir="ltr"></div>
+    <button class="btn btn-p" id="rb" onclick="doRegister()"><i class="fa-solid fa-check"></i>إنشاء الحساب</button>
+    <div class="as">لديك حساب؟ <a onclick="showView('login')">تسجيل الدخول</a></div>
+  </div>
+</div>
+
+<!-- ⑤ HOME -->
+<div id="home" class="view has-nav" style="padding-bottom:84px;">
+  <div class="hh">
+    <div class="htb">
+      <div><div class="gr">أهلاً 👋</div><div class="nm" id="h-name">—</div></div>
+      <div class="av" onclick="switchTab('profile')"><i class="fa-solid fa-circle-user"></i></div>
+    </div>
+    <div class="hpc">
+      <div class="hpc-t"><span class="lb">تقدمك الإجمالي</span><span class="pt" id="h-pct">0%</span></div>
+      <div class="pb"><div class="pf" id="h-bar" style="width:0%"></div></div>
+      <div class="hpc-s"><span id="h-ld"><i class="fa-solid fa-book-open"></i> 0 دروس</span><span>·</span><span id="h-ed"><i class="fa-solid fa-bullseye"></i> 0 اختبارات</span></div>
+    </div>
+  </div>
+  <div class="hb">
+    <div class="st">الوصول السريع</div>
+    <div class="qg">
+      <div class="qc qc-p" onclick="switchTab('lessons')">
+        <i class="fa-solid fa-book-open qc-ic"></i>
+        <div class="qc-tl">الدروس النظرية</div>
+        <div class="qc-sb">26 درساً</div>
+      </div>
+      <div class="qc qc-m" onclick="startExam()">
+        <i class="fa-solid fa-bullseye qc-ic"></i>
+        <div class="qc-tl">الاختبار التجريبي</div>
+        <div class="qc-sb">59 سؤال</div>
+      </div>
+      <div class="qc qc-i" onclick="switchTab('ai')">
+        <i class="fa-solid fa-robot qc-ic"></i>
+        <div class="qc-tl">المساعدة الذكية</div>
+        <div class="qc-sb">اسألني أي شيء</div>
+      </div>
+      <div class="qc qc-w" onclick="switchTab('progress')">
+        <i class="fa-solid fa-chart-line qc-ic"></i>
+        <div class="qc-tl">نتائجي</div>
+        <div class="qc-sb">تقدمي وإحصائياتي</div>
+      </div>
+    </div>
+    <div class="st">آخر الدروس</div>
+    <div id="h-recent"></div>
+  </div>
+</div>
+
+<!-- ⑥ LESSONS -->
+<div id="lessons" class="view has-nav" style="padding-bottom:84px;">
+  <div class="sh sh-m"><div class="sh-t">📚 الدروس النظرية</div><div class="sh-s">5 فصول · 26 درساً</div></div>
+  <div id="ch-list" style="padding:12px 0 20px"></div>
+</div>
+
+<!-- ⑦ LESSON DETAIL -->
+<div id="lesson-detail" class="view">
+  <div class="sh sh-p" id="ld-head">
+    <div class="sh-bk" onclick="goBack()"><i class="fa-solid fa-arrow-right"></i><span>رجوع</span></div>
+    <div class="sh-t" id="ld-t">—</div><div class="sh-s" id="ld-s">—</div>
+  </div>
+  <div id="ld-body" class="lc"></div>
+  <div id="ld-quiz" class="qs" style="display:none;margin:0 16px 16px;">
+    <div style="font-size:16px;font-weight:900;color:#3D1A6E;margin-bottom:14px;display:flex;align-items:center;gap:8px;font-family:'Cairo',sans-serif;">🧠 اختبر نفسك</div>
+    <div id="quiz-qs"></div>
+    <button onclick="submitQuiz()" id="quiz-btn"
+      style="width:100%;padding:15px;border:none;border-radius:16px;background:linear-gradient(135deg,#6B2FA0,#3D1A6E);color:#fff;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(107,47,160,.35);">إرسال الإجابات ✓</button>
+  </div>
+  <div style="height:50px"></div>
+</div>
+
+<!-- ⑧ EXAM -->
+<div id="exam" class="view">
+  <div style="background:linear-gradient(135deg,#3D1A6E,#8B1A3A);padding:18px 18px 26px;color:#fff;text-align:center;position:relative;border-radius:0 0 20px 20px;">
+    <div style="font-size:15px;font-weight:800;opacity:.9;margin-bottom:4px;">
+      <i class="fa-solid fa-bullseye" style="margin-left:6px;"></i>الاختبار التجريبي
+    </div>
+    <div id="e-timer" style="font-size:36px;font-weight:900;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.25);border-radius:16px;padding:8px 28px;display:inline-block;margin:8px auto;font-variant-numeric:tabular-nums;letter-spacing:2px;">45:00</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+      <span id="e-ql" dir="ltr" style="font-size:12px;color:rgba(255,255,255,.85);font-weight:700;white-space:nowrap;">1 / 30</span>
+      <div style="flex:1;height:5px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;">
+        <div id="e-pf" style="width:3%;height:100%;background:rgba(255,255,255,.85);border-radius:4px;transition:width .35s;"></div>
+      </div>
+      <span style="font-size:12px;color:rgba(255,255,255,.85);font-weight:700;white-space:nowrap;">الوقت المتبقي</span>
+    </div>
+  </div>
+  <!-- منطقة السؤال -->
+  <div style="padding:16px 16px 0;">
+    <div style="background:#fff;border-radius:18px;padding:18px;border:1px solid #EDE6F8;margin-bottom:12px;box-shadow:0 4px 20px rgba(107,47,160,.12);">
+      <div id="e-img" style="width:100%;height:180px;background:linear-gradient(135deg,rgba(107,47,160,.07),rgba(139,26,58,.05));border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:56px;overflow:hidden;">🚦</div>
+      <div id="e-num" style="font-size:11px;color:#8B7AAA;margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;font-family:'Cairo',sans-serif;">السؤال 1 من 30</div>
+      <div id="e-txt" style="font-size:15px;font-weight:800;color:#16052E;margin-bottom:14px;line-height:1.6;font-family:'Cairo',sans-serif;">—</div>
+      <div id="e-opts"></div>
+      <div id="e-exp" style="display:none;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:11px 14px;font-size:13px;color:#16A34A;margin-top:12px;line-height:1.7;font-family:'Cairo',sans-serif;"></div>
+    </div>
+  </div>
+  <!-- أزرار التنقل -->
+  <div style="display:flex;gap:10px;padding:0 16px 16px;">
+    <button onclick="skipQ()" style="padding:10px 20px;border:none;border-radius:10px;background:#EDE6F8;color:#16052E;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">تخطي ←</button>
+    <button onclick="nextQ()" id="e-next" style="flex:1;padding:15px;border:none;border-radius:16px;background:linear-gradient(135deg,#6B2FA0,#3D1A6E);color:#fff;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(107,47,160,.35);">التالي ←</button>
+  </div>
+</div>
+
+<!-- ⑨ EXAM RESULT -->
+<div id="exam-result" class="view">
+  <div class="rh"><div class="ri" id="r-icon">🎉</div><div class="rs" id="r-score">—</div><div class="rl" id="r-lbl">—</div></div>
+  <div class="rb">
+    <div class="rst"><div class="rs-ic ok-bg"><i class="fa-solid fa-circle-check"></i></div><div><div class="rs-l">إجابات صحيحة</div><div class="rs-v" id="r-ok">—</div></div></div>
+    <div class="rst"><div class="rs-ic err-bg"><i class="fa-solid fa-circle-xmark"></i></div><div><div class="rs-l">إجابات خاطئة</div><div class="rs-v" id="r-err">—</div></div></div>
+    <div class="rst"><div class="rs-ic p-bg"><i class="fa-solid fa-stopwatch"></i></div><div><div class="rs-l">الوقت المستغرق</div><div class="rs-v" id="r-time">—</div></div></div>
+    <div style="margin-top:8px;display:flex;gap:10px">
+      <button class="btn btn-p" onclick="startExam()">
+        <i class="fa-solid fa-rotate-right"></i> إعادة الاختبار
+      </button>
+      <button class="btn btn-s btn-sm" onclick="switchTab('home')" style="width:auto;padding:14px 20px">
+        <i class="fa-solid fa-house"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ⑩ AI CHAT -->
+<div id="ai" class="view has-nav" style="display:none;position:fixed;top:0;left:0;right:0;bottom:64px;flex-direction:column;overflow:hidden;background:#F4F0FB;z-index:10;">
+
+  <!-- ── Header ── -->
+  <div style="background:linear-gradient(135deg,#1E0A3C,#3D1A6E);padding:16px 18px;color:#fff;display:flex;align-items:center;gap:14px;flex-shrink:0;box-shadow:0 4px 20px rgba(62,26,110,.3);">
+    <div style="width:48px;height:48px;background:linear-gradient(135deg,#9B59D0,#B52050);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(107,47,160,.4);">
+      <i class="fa-solid fa-robot" style="font-size:22px;color:#fff;"></i>
+    </div>
+    <div style="flex:1;">
+      <div style="font-size:16px;font-weight:800;font-family:'Cairo',sans-serif;">مرشدي الذكي</div>
+      <div style="font-size:11px;color:#86EFAC;margin-top:2px;display:flex;align-items:center;gap:5px;font-family:'Cairo',sans-serif;font-weight:600;">
+        <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#86EFAC;flex-shrink:0;"></span>متاح الآن
+      </div>
+    </div>
+    <!-- Token badge -->
+    <div id="ai-token-badge"
+      style="background:rgba(134,239,172,.2);color:#86EFAC;border-radius:20px;padding:5px 12px;font-size:13px;font-weight:800;font-family:'Cairo',sans-serif;flex-shrink:0;">
+      0 🎯
+    </div>
+  </div>
+
+  <!-- ── Messages ── -->
+  <div id="chat-msgs" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;padding:14px;display:flex;flex-direction:column;gap:14px;">
+    <!-- رسالة ترحيب -->
+    <div style="align-self:flex-start;display:flex;gap:10px;align-items:flex-start;max-width:88%;">
+      <div style="width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#6B2FA0,#8B1A3A);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px;">
+        <i class="fa-solid fa-robot" style="color:#fff;font-size:13px;"></i>
+      </div>
+      <div style="background:#fff;border-radius:4px 16px 16px 16px;padding:11px 13px;border:1px solid #EDE6F8;font-size:13px;color:#16052E;line-height:1.75;box-shadow:0 2px 8px rgba(107,47,160,.07);font-family:'Cairo',sans-serif;">
+        أهلاً! أنا مرشدك الذكي 🚗<br><br>يمكنني الإجابة على كل أسئلتك عن قواعد المرور والقيادة الآمنة. اسألني!
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Suggestions ── -->
+  <div id="ai-sugg" style="display:flex;gap:8px;padding:8px 14px 4px;overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;">
+    <button onclick="useSugg(this)" style="white-space:nowrap;background:rgba(107,47,160,.07);border:1.5px solid rgba(107,47,160,.18);color:#6B2FA0;border-radius:30px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;flex-shrink:0;outline:none;">ما معنى الخط الأبيض المستمر؟</button>
+    <button onclick="useSugg(this)" style="white-space:nowrap;background:rgba(107,47,160,.07);border:1.5px solid rgba(107,47,160,.18);color:#6B2FA0;border-radius:30px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;flex-shrink:0;outline:none;">متى أشغّل أضواء السيارة؟</button>
+    <button onclick="useSugg(this)" style="white-space:nowrap;background:rgba(107,47,160,.07);border:1.5px solid rgba(107,47,160,.18);color:#6B2FA0;border-radius:30px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;flex-shrink:0;outline:none;">كيف أتصرف في حادث مروري؟</button>
+    <button onclick="useSugg(this)" style="white-space:nowrap;background:rgba(107,47,160,.07);border:1.5px solid rgba(107,47,160,.18);color:#6B2FA0;border-radius:30px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;flex-shrink:0;outline:none;">ما هي قاعدة الأولوية في التقاطعات؟</button>
+  </div>
+
+  <!-- ── Input Area (when tokens > 0) ── -->
+  <div id="ai-input-area" style="display:none;gap:8px;padding:10px 14px;background:#fff;border-top:1px solid #EDE6F8;flex-shrink:0;align-items:flex-end;">
+    <textarea id="ci" placeholder="اسألني عن القيادة..." rows="1" onkeydown="chatKey(event)"
+      style="flex:1;background:#EDE6F8;border:2px solid transparent;border-radius:14px;padding:10px 14px;font-family:'Cairo',sans-serif;font-size:13px;color:#16052E;outline:none;resize:none;max-height:80px;line-height:1.5;"></textarea>
+    <button onclick="sendChat()"
+      style="width:44px;height:44px;min-width:44px;background:linear-gradient(135deg,#6B2FA0,#3D1A6E);border:none;border-radius:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(107,47,160,.35);">
+      <i class="fa-solid fa-paper-plane" style="font-size:16px;color:#fff;"></i>
+    </button>
+  </div>
+
+  <!-- ── Watch Ad Gate (when tokens = 0) ── -->
+  <div id="ai-watch-area" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 14px;background:#fff;border-top:1px solid #EDE6F8;flex-shrink:0;">
+    <div id="watch-msg" style="font-size:13px;color:#4A3060;text-align:center;font-family:'Cairo',sans-serif;line-height:1.6;">
+      شاهد إعلاناً قصيراً واحصل على 3 طلبات للمساعد الذكي 🎁
+    </div>
+    <button id="watch-btn" onclick="watchRewardedAd()"
+      style="width:100%;padding:14px;border:none;border-radius:16px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(245,158,11,.35);">
+      <i class="fa-solid fa-circle-play"></i> شاهد إعلاناً (5 ثوانٍ)
+    </button>
+    <div style="font-size:11px;color:#B8A8D0;font-family:'Cairo',sans-serif;" id="watch-limit-info"></div>
+  </div>
+
+</div>
+
+<!-- ⑪ PROGRESS -->
+<div id="progress" class="view has-nav" style="padding-bottom:84px;">
+  <div class="sh sh-x"><div class="sh-t">📊 تقدمي</div><div class="sh-s">إحصائياتك ونتائجك</div></div>
+  <div class="sg2" id="prog-stats"></div>
+  <div style="padding:16px">
+    <div class="st">سجل الاختبارات</div>
+    <div id="exam-hist"></div>
+  </div>
+</div>
+
+<!-- ⑫ AD INFO PAGE -->
+<div id="subscription" class="view has-nav" style="padding-bottom:84px;">
+
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#1E0A3C,#3D1A6E);padding:32px 20px 24px;text-align:center;color:#fff;">
+    <div style="font-size:52px;margin-bottom:10px;">📺</div>
+    <div style="font-size:22px;font-weight:900;font-family:'Cairo',sans-serif;">كيف يعمل التطبيق؟</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.78);margin-top:6px;font-weight:600;font-family:'Cairo',sans-serif;">مجاني بالكامل — فقط شاهد إعلاناً قصيراً</div>
+  </div>
+
+  <div style="padding:20px 16px;display:flex;flex-direction:column;gap:14px;">
+
+    <!-- Rewarded Ad Card -->
+    <div style="background:#fff;border-radius:20px;padding:20px;border:2px solid #EDE6F8;box-shadow:0 4px 20px rgba(107,47,160,.1);">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+        <div style="width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,#6B2FA0,#3D1A6E);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-robot" style="color:#fff;font-size:22px;"></i>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:900;color:#16052E;font-family:'Cairo',sans-serif;">المساعد الذكي</div>
+          <div style="font-size:12px;color:#8B7AAA;font-family:'Cairo',sans-serif;">مرشدك في القيادة</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#16052E;font-family:'Cairo',sans-serif;">
+          <i class="fa-solid fa-circle-play" style="color:#6B2FA0;flex-shrink:0;"></i>
+          شاهد إعلاناً (5 ثوانٍ) ← احصلي على <strong>3 طلبات</strong>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#16052E;font-family:'Cairo',sans-serif;">
+          <i class="fa-solid fa-rotate" style="color:#6B2FA0;flex-shrink:0;"></i>
+          كرّري المشاهدة للمزيد من الطلبات
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#16052E;font-family:'Cairo',sans-serif;">
+          <i class="fa-solid fa-calendar-day" style="color:#F59E0B;flex-shrink:0;"></i>
+          الحد الأقصى: <strong>5 إعلانات</strong> يومياً (15 طلب)
+        </div>
+      </div>
+      <button onclick="switchTab('ai')"
+        style="width:100%;margin-top:16px;padding:13px;border:none;border-radius:14px;background:linear-gradient(135deg,#6B2FA0,#3D1A6E);color:#fff;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+        <i class="fa-solid fa-robot"></i> اذهبي للمساعد الذكي
+      </button>
+    </div>
+
+    <!-- Interstitial Info Card -->
+    <div style="background:#fff;border-radius:20px;padding:20px;border:2px solid #EDE6F8;box-shadow:0 4px 20px rgba(107,47,160,.1);">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+        <div style="width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-book-open" style="color:#fff;font-size:20px;"></i>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:900;color:#16052E;font-family:'Cairo',sans-serif;">الدروس</div>
+          <div style="font-size:12px;color:#8B7AAA;font-family:'Cairo',sans-serif;">جميع الدروس مجانية</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#16052E;font-family:'Cairo',sans-serif;">
+          <i class="fa-solid fa-circle-check" style="color:#22C55E;flex-shrink:0;"></i>
+          <strong>كل الدروس الـ25</strong> متاحة مجاناً بالكامل
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#16052E;font-family:'Cairo',sans-serif;">
+          <i class="fa-solid fa-circle-check" style="color:#22C55E;flex-shrink:0;"></i>
+          الاختبارات والتقدم محفوظ
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#8B7AAA;font-family:'Cairo',sans-serif;">
+          <i class="fa-solid fa-tv" style="color:#F59E0B;flex-shrink:0;"></i>
+          إعلان قصير (3 ثوانٍ) يظهر عند إكمال كل درس
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily counter -->
+    <div style="background:linear-gradient(135deg,rgba(107,47,160,.06),rgba(139,26,58,.04));border:1px solid rgba(107,47,160,.14);border-radius:16px;padding:16px;text-align:center;">
+      <div style="font-size:13px;color:#6B2FA0;font-weight:700;font-family:'Cairo',sans-serif;margin-bottom:8px;">إعلاناتك اليوم</div>
+      <div id="sub-ad-counter" style="font-size:28px;font-weight:900;color:#3D1A6E;font-family:'Cairo',sans-serif;">0 / 5</div>
+      <div style="font-size:12px;color:#8B7AAA;margin-top:4px;font-family:'Cairo',sans-serif;">تتجدد كل يوم عند منتصف الليل</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ⑬ PROFILE -->
+<div id="profile" class="view has-nav" style="padding-bottom:84px;">
+  <!-- HEADER with full inline styles -->
+  <div style="background:linear-gradient(135deg,#3D1A6E,#6B2FA0);padding:40px 24px 32px;color:#fff;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;border-radius:0 0 24px 24px;">
+    <div style="width:84px;height:84px;border-radius:26px;background:rgba(255,255,255,.18);border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.15);">
+      <i class="fa-solid fa-circle-user" style="font-size:40px;color:rgba(255,255,255,.95)"></i>
+    </div>
+    <div id="pf-name" style="font-size:20px;font-weight:900;letter-spacing:-.3px;">—</div>
+    <div id="pf-email" style="font-size:13px;color:rgba(255,255,255,.7);margin-top:4px;">—</div>
+    <div id="pf-plan" style="margin-top:10px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:5px 16px;font-size:12px;font-weight:700;display:inline-block;">الخطة المجانية</div>
+  </div>
+  <!-- MENU with full inline styles -->
+  <div style="padding:16px;">
+    <div onclick="switchTab('subscription')" style="background:#fff;border-radius:16px;padding:15px 16px;display:flex;align-items:center;gap:12px;margin-bottom:10px;border:1.5px solid #EDE6F8;cursor:pointer;box-shadow:0 2px 10px rgba(107,47,160,.08);">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(107,47,160,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fa-solid fa-gem" style="color:#6B2FA0;font-size:17px;"></i>
+      </div>
+      <div style="flex:1;font-size:14px;font-weight:700;color:#16052E;">ترقية الاشتراك</div>
+      <i class="fa-solid fa-chevron-left" style="color:#8B7AAA;font-size:12px;"></i>
+    </div>
+    <div onclick="switchTab('progress')" style="background:#fff;border-radius:16px;padding:15px 16px;display:flex;align-items:center;gap:12px;margin-bottom:10px;border:1.5px solid #EDE6F8;cursor:pointer;box-shadow:0 2px 10px rgba(107,47,160,.08);">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(107,47,160,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fa-solid fa-chart-line" style="color:#6B2FA0;font-size:17px;"></i>
+      </div>
+      <div style="flex:1;font-size:14px;font-weight:700;color:#16052E;">إحصائياتي</div>
+      <i class="fa-solid fa-chevron-left" style="color:#8B7AAA;font-size:12px;"></i>
+    </div>
+    <div onclick="switchTab('ai')" style="background:#fff;border-radius:16px;padding:15px 16px;display:flex;align-items:center;gap:12px;margin-bottom:10px;border:1.5px solid #EDE6F8;cursor:pointer;box-shadow:0 2px 10px rgba(107,47,160,.08);">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(107,47,160,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fa-solid fa-robot" style="color:#6B2FA0;font-size:17px;"></i>
+      </div>
+      <div style="flex:1;font-size:14px;font-weight:700;color:#16052E;">المساعد الذكي</div>
+      <i class="fa-solid fa-chevron-left" style="color:#8B7AAA;font-size:12px;"></i>
+    </div>
+    <div onclick="doLogout()" style="background:#fff;border-radius:16px;padding:15px 16px;display:flex;align-items:center;gap:12px;margin-bottom:10px;border:1.5px solid #FEECEC;cursor:pointer;box-shadow:0 2px 10px rgba(239,68,68,.08);">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(239,68,68,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fa-solid fa-right-from-bracket" style="color:#EF4444;font-size:17px;"></i>
+      </div>
+      <div style="flex:1;font-size:14px;font-weight:700;color:#EF4444;">تسجيل الخروج</div>
+      <i class="fa-solid fa-chevron-left" style="color:#EF4444;font-size:12px;opacity:.6;"></i>
+    </div>
+  </div>
+</div>
+
+<!-- ══ AD MODAL ══ -->
+<div id="ad-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;">
+  <!-- Ad content box -->
+  <div style="width:90%;max-width:360px;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);">
+    <!-- Ad label -->
+    <div id="ad-label" style="background:#F59E0B;padding:6px 14px;font-size:11px;font-weight:700;color:#fff;font-family:'Cairo',sans-serif;text-align:center;">إعلان</div>
+    <!-- Fake ad visual -->
+    <div id="ad-visual" style="width:100%;height:180px;background:linear-gradient(135deg,#1E0A3C,#6B2FA0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+      <div style="font-size:52px;">🚗</div>
+      <div style="color:#fff;font-size:16px;font-weight:900;font-family:'Cairo',sans-serif;">درب</div>
+      <div style="color:rgba(255,255,255,.8);font-size:12px;font-family:'Cairo',sans-serif;">طريقك للقيادة الصحيحة</div>
+    </div>
+    <!-- Timer + info -->
+    <div style="padding:18px;text-align:center;">
+      <div id="ad-title" style="font-size:15px;font-weight:900;color:#16052E;font-family:'Cairo',sans-serif;margin-bottom:6px;">شاهد الإعلان للحصول على مكافأة</div>
+      <div id="ad-sub" style="font-size:13px;color:#8B7AAA;font-family:'Cairo',sans-serif;margin-bottom:16px;">ستحصل على 3 طلبات للمساعد الذكي</div>
+      <!-- Progress bar -->
+      <div style="background:#EDE6F8;border-radius:10px;height:8px;margin-bottom:14px;overflow:hidden;">
+        <div id="ad-prog" style="height:100%;background:linear-gradient(90deg,#6B2FA0,#9B59D0);border-radius:10px;width:0%;transition:width 1s linear;"></div>
+      </div>
+      <!-- Skip / countdown button -->
+      <button id="ad-btn" onclick="closeAd()" disabled
+        style="width:100%;padding:14px;border:none;border-radius:14px;background:#EDE6F8;color:#8B7AAA;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:not-allowed;">
+        <span id="ad-btn-txt">انتظر <span id="ad-count">5</span> ث</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav id="bnav">
+  <button class="nb active" data-t="home" onclick="switchTab('home')">
+    <i class="fa-solid fa-house ni"></i><span class="nl">الرئيسية</span>
+  </button>
+  <button class="nb" data-t="lessons" onclick="switchTab('lessons')">
+    <i class="fa-solid fa-book-open ni"></i><span class="nl">الدروس</span>
+  </button>
+  <button class="nb" data-t="exam" onclick="startExam()">
+    <i class="fa-solid fa-bullseye ni"></i><span class="nl">اختبار</span>
+  </button>
+  <button class="nb" data-t="ai" onclick="switchTab('ai')">
+    <i class="fa-solid fa-robot ni"></i><span class="nl">مرشدي</span>
+  </button>
+  <button class="nb" data-t="profile" onclick="switchTab('profile')">
+    <i class="fa-solid fa-circle-user ni"></i><span class="nl">حسابي</span>
+  </button>
+</nav>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyARKFPxUSTkNDNWWcJ2S_RvdcItKA59_c0",
+  authDomain:"driving-education-app.firebaseapp.com",
+  projectId:"driving-education-app",
+  storageBucket:"driving-education-app.firebasestorage.app",
+  messagingSenderId:"54914959225",
+  appId:"1:54914959225:web:115ffc44db9d92a44951a8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const GROQ_KEY = 'YOUR_GROQ_API_KEY';
+
+// ═══════════════════════════════════════
+// DATA — مسار تعليمي كامل
+// ═══════════════════════════════════════
+const CHAPTERS = [
+
+// ══════════════════════════════════════
+// الفصل الأول: أساسيات السيارة والقيادة
+// ══════════════════════════════════════
+{ id:'ch1', title:'أساسيات السيارة والقيادة', icon:'🚗', lessons:[
+
+  { id:'l11', title:'لوحة القيادة والأجهزة الأساسية', dur:'10 دقائق', free:true,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,dashboard,speedometer,interior&sig=1" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🎛️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">اللوحة أمامك هي "عيون" السيارة — تُخبرك بكل ما يحدث في أي لحظة.</p>
+<div class="kc b"><div class="ki">🏎️</div><p><strong>عداد السرعة</strong><br>يُظهر سرعتك الحالية. لا تتجاوز الحد المكتوب على لافتات الطريق.</p></div>
+<div class="kc y"><div class="ki">⛽</div><p><strong>مؤشر الوقود</strong><br>حين يصل لربع الخزان ابحث عن محطة وقود فوراً.</p></div>
+<div class="kc r"><div class="ki">🌡️</div><p><strong>مؤشر الحرارة</strong><br>يبقى في المنتصف دائماً. وصل للأحمر؟ أوقف السيارة فوراً وانتظر.</p></div>
+<div class="kc g"><div class="ki">💡</div><p><strong>لمبات التنبيه</strong><br>🔴 حمراء = خطر أوقف | 🟡 صفراء = راجعي قريباً | 🟢 خضراء = معلومة فقط</p></div>
+<div class="tip">💡 قبل كل رحلة: لا لمبة حمراء مضاءة + وقود كافٍ = أنت جاهزة.</div>`,
+    quiz:[
+      {q:'ماذا يعني ارتفاع مؤشر الحرارة للمنطقة الحمراء؟',opts:['تشغيل التكييف','أوقف السيارة فوراً','زيادة السرعة','تجاهله'],cor:1},
+      {q:'ما لون لمبة التحذير التي تعني خطراً فورياً؟',opts:['أخضر','أصفر','أحمر','أزرق'],cor:2},
+      {q:'متى تضيء لمبات التحذير بشكل طبيعي؟',opts:['أبداً','عند وضع المفتاح في On قبل الإشعال','في الليل فقط','عند الكبح'],cor:1}
+    ]
+  },
+
+  { id:'l12', title:'الوضعية الصحيحة والمقعد والمرايا', dur:'9 دقائق', free:true,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,driver,steering,wheel,seat,mirror&sig=2" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🪑</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">الجلسة الصحيحة تمنحك تحكماً كاملاً وتقلل الإرهاق في الرحلات الطويلة.</p>
+<div class="kc g"><div class="ki">💺</div><p><strong>ضبط المقعد</strong><br>اضبطه حتى تضغطي الفرامل بقدم كاملة مع بقاء الركبة مرنة قليلاً.</p></div>
+<div class="kc b"><div class="ki">🤲</div><p><strong>اليدان على المقود</strong><br>الوضع 9 و3 (كعقارب الساعة) يعطيك أفضل تحكم ويحمي يديك من الوسادة الهوائية.</p></div>
+<div class="kc "><div class="ki">🪞</div><p><strong>ضبط المرايا</strong><br>الداخلية: كامل النافذة الخلفية. الجانبيتان: خط الطريق + جانب السيارة.</p></div>
+<div class="kc r"><div class="ki">⚠️</div><p><strong>المنطقة العمياء</strong><br>زاوية لا ترينها في أي مرآة. قبل تغيير المسار: انظر مباشرة من فوق كتفك.</p></div>
+<div class="tip">💡 SMOG قبل أي مناورة: Signal أشر → Mirror مرايا → Over the shoulder انظر للخلف → Go تحركي.</div>`,
+    quiz:[
+      {q:'ما الوضع الصحيح لليدين على المقود؟',opts:['12 و6','10 و2 أو 9 و3','8 و4','أي وضع مريح'],cor:1},
+      {q:'ما المنطقة العمياء في السيارة؟',opts:['ما أمامك مباشرةً','المنطقة التي لا تغطيها أي مرآة','الجزء الخلفي','ما تراه في المرآة الداخلية'],cor:1},
+      {q:'كيف تتحققن من المنطقة العمياء بأمان؟',opts:['الاعتماد على المرايا فقط','النظر المباشر من فوق كتفك','الضغط على البوق','الاعتماد على المستشعرات'],cor:1}
+    ]
+  },
+
+  { id:'l13', title:'ناقل الحركة — يدوي وأوتوماتيك', dur:'12 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?automatic,gear,shift,car,interior&sig=3" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>⚙️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">ناقل الحركة يُحدد كيف تتحرك سيارتك — الأوتوماتيك الأسهل والأشيع اليوم.</p>
+<div class="kc b"><div class="ki">🔵</div><p><strong>الأوتوماتيك</strong><br>P=وقوف | R=خلف | N=محايد | D=سير للأمام. ابقَ في D دائماً أثناء القيادة.</p></div>
+<div class="kc g"><div class="ki">🟢</div><p><strong>اليدوي</strong><br>يحتاج دواسة الكلتش. غيّر الترس حين ترتفع ضوضاء المحرك (أعلى) أو حين تبطئين (أدنى).</p></div>
+<div class="kc r"><div class="ki">❌</div><p><strong>أخطاء تتلف الناقل</strong><br>لا تنقلي لـ P أو R والسيارة تتحرك. في الأوتوماتيك: قدم واحدة فقط دائماً.</p></div>
+<div class="tip">💡 في الأوتوماتيك: قدم يمنى واحدة فقط — إما الدواسة أو الفرامل، لا كلتيهما معاً.</div>`,
+    quiz:[
+      {q:'ما وضع P في ناقل الأوتوماتيك؟',opts:['القيادة للأمام','الرجوع للخلف','الإيقاف مع قفل الناقل','المحايد'],cor:2},
+      {q:'متى تستخدمين وضع N في الأوتوماتيك؟',opts:['للقيادة العادية','نادراً — فقط عند السحب أو الإيقاف الطويل','للرجوع للخلف','على الطريق السريع'],cor:1},
+      {q:'كم قدم تستخدمين في السيارة الأوتوماتيك؟',opts:['قدمان — واحدة للكبح وواحدة للدواسة','قدم واحدة فقط','حسب الظروف','ثلاث أقدام'],cor:1}
+    ]
+  },
+
+  { id:'l14', title:'حزام الأمان ومقاعد الأطفال', dur:'8 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?seatbelt,car,safety,buckle&sig=4" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🦺</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">الحزام يقلل خطر الوفاة بنسبة 45%. ارتداؤه في كل رحلة قانون ليس خياراً.</p>
+<div class="kc g"><div class="ki">✅</div><p><strong>الطريقة الصحيحة</strong><br>الجزء العلوي عبر الصدر والكتف، السفلي على الحوض — ليس تحت الذراع ولا على البطن.</p></div>
+<div class="kc r"><div class="ki">❌</div><p><strong>خطأ شائع</strong><br>الحزام خلف الكتف أو فضفاضاً = لا حماية. على الرقبة = خطر اختناق.</p></div>
+<div class="kc b"><div class="ki">👶</div><p><strong>مقاعد الأطفال</strong><br>أقل من 13 كجم: مقعد خلفي مواجه للخلف. 9-18 كجم: مواجه للأمام مع حزام خاص.</p></div>
+<div class="kc y"><div class="ki">⚠️</div><p><strong>لا أطفال في الأمام</strong><br>الوسادة الهوائية الأمامية قاتلة للأطفال — الخلف دائماً بدون استثناء.</p></div>
+<div class="tip">💡 الحزام صحيح: لا فراغ بين الجسم والحزام، ولا ضغط على العنق أو البطن.</div>`,
+    quiz:[
+      {q:'أين يجب أن يكون الجزء العلوي من حزام الأمان؟',opts:['تحت الذراع','خلف الكتف','عبر الصدر والكتف','على الرقبة'],cor:2},
+      {q:'أين يجب تثبيت مقعد الطفل (الرضيع تحت 13 كجم)؟',opts:['المقعد الأمامي مواجهاً للأمام','المقعد الخلفي مواجهاً للخلف','أي مكان','المقعد الأمامي مواجهاً للخلف'],cor:1},
+      {q:'لماذا لا يجب وضع الطفل في المقعد الأمامي؟',opts:['لأنه لا يرى الطريق','لأن الوسادة الهوائية خطرة عليه','لأنه يشتت القائد','لأن القانون يمنع'],cor:1}
+    ]
+  },
+
+  { id:'l15', title:'استخدام الأضواء في كل الظروف', dur:'9 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,headlights,night,driving,lights&sig=5" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>💡</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">الأضواء الصحيحة تُريك الطريق وتجعلك مرئية للآخرين — لكل حالة ضوءها المناسب.</p>
+<div class="kc b"><div class="ki">🔆</div><p><strong>الأضواء القريبة</strong><br>الخيار اليومي: ليلاً في الشوارع، في الأنفاق، عند وجود سيارات مقابلة، في المطر.</p></div>
+<div class="kc y"><div class="ki">🔦</div><p><strong>الأضواء البعيدة</strong><br>للطرق الريفية المظلمة الخالية فقط. خفّضها فوراً عند رؤية أي سيارة (150م).</p></div>
+<div class="kc r"><div class="ki">🌫️</div><p><strong>مصابيح الضباب</strong><br>عند رؤية أقل من 100م. لا تستخدمي الأضواء البعيدة مع الضباب — تعكس وتُعمي.</p></div>
+<div class="kc g"><div class="ki">🚨</div><p><strong>الفلاشر (طوارئ)</strong><br>للتوقف الاضطراري فقط. لا تستخدميه في المطر — يُضلّل السائقين خلفك.</p></div>
+<div class="tip">💡 إشارة الانعطاف: شغّليها 30م مسبقاً، وأطفئها بعد إتمام المناورة.</div>`,
+    quiz:[
+      {q:'متى تستخدمين الأضواء البعيدة؟',opts:['دائماً في الليل','في الطرق المظلمة الخالية فقط','في الضباب','في المدن ليلاً'],cor:1},
+      {q:'متى تستخدمين مصابيح الضباب؟',opts:['في كل مطر','عند رؤية أقل من 100م','في الليل دائماً','عند الرياح الشديدة'],cor:1},
+      {q:'هل يجوز استخدام الفلاشر في المطر الشديد أثناء القيادة؟',opts:['نعم — للتحذير','لا — يُضلّل السائقين خلفك','نعم دائماً','حسب الظروف'],cor:1}
+    ]
+  },
+
+  { id:'l16', title:'أجهزة السلامة الحديثة', dur:'8 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,airbag,safety,technology,modern&sig=6" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🛡️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">السيارات الحديثة تحمل أجهزة تساعدك تلقائياً — اعرفها لتستفيدي منها.</p>
+<div class="kc b"><div class="ki">🔒</div><p><strong>نظام ABS (فرامل)</strong><br>عند الكبح الشديد ستشعرين باهتزاز في الدواسة — طبيعي جداً، استمر بالضغط الثابت.</p></div>
+<div class="kc g"><div class="ki">⚖️</div><p><strong>نظام ESP (استقرار)</strong><br>يتدخل تلقائياً إذا انزلقت السيارة ويعيدها للمسار. لا تُطفئيه في الطقس الصعب.</p></div>
+<div class="kc y"><div class="ki">🫧</div><p><strong>الوسادة الهوائية</strong><br>تنفخ خلال ثانية واحدة. تعمل بفعالية فقط مع الحزام — بدونه قد تُصيب.</p></div>
+<div class="kc "><div class="ki">📷</div><p><strong>كاميرا الرجوع</strong><br>مساعدة وليست بديلاً — دائماً انظر مباشرة قبل الرجوع.</p></div>
+<div class="tip">💡 ABS = اضغطي وابقَ. Airbag = الحزام أولاً. ESP = لا تُطفئيه في المطر.</div>`,
+    quiz:[
+      {q:'ماذا تفعلين عند شعور باهتزاز دواسة الفرامل أثناء الكبح الشديد؟',opts:['تُفلتين الفرامل فوراً','تستمرين بالضغط الثابت — هذا نظام ABS','تضغطين بالتقطيع','تستخدمين مكبح اليد'],cor:1},
+      {q:'هل تضمن الوسادة الهوائية الحماية بدون حزام الأمان؟',opts:['نعم دائماً','لا — قد تسبب إصابات بدون الحزام','نعم للبالغين فقط','حسب سرعة الاصطدام'],cor:1},
+      {q:'هل تُغني كاميرا الرجوع عن النظر المباشر؟',opts:['نعم كلياً','لا — هي مساعدة فقط','نعم في الأماكن الضيقة','حسب حجم السيارة'],cor:1}
+    ]
+  }
+
+]}, // end ch1
+
+// ══════════════════════════════════════
+// الفصل الثاني: إشارات المرور
+// ══════════════════════════════════════
+{ id:'ch2', title:'إشارات المرور', icon:'🚦', lessons:[
+
+  { id:'l21', title:'الإشارات الضوئية بالتفصيل', dur:'10 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?traffic,light,red,green,intersection&sig=7" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🚦</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">الإشارات الضوئية لغة عالمية — معرفتها الكاملة تمنع الحوادث والمخالفات.</p>
+<div class="kc r"><div class="ki">🔴</div><p><strong>أحمر: توقف تام</strong><br>قفي قبل الخط الأبيض. لا تتحركي حتى يتحول للأخضر حتى لو التقاطع خالٍ.</p></div>
+<div class="kc y"><div class="ki">🟡</div><p><strong>أصفر: استعدي</strong><br>ليس إشارة للتسارع! توقفي إن كنت بعيدة، وتابعي بحذر إن كنت قريبة جداً.</p></div>
+<div class="kc g"><div class="ki">🟢</div><p><strong>أخضر: تابعي بانتباه</strong><br>الأخضر لا يعني الأمان المطلق — تأكدي أن التقاطع فارغ فعلاً خاصة من المشاة.</p></div>
+<div class="kc b"><div class="ki">🔄</div><p><strong>الوامض</strong><br>أحمر وامض = توقف كامل (مثل STOP). أصفر وامض = تباطأ وتابعي بحذر.</p></div>
+<div class="tip">💡 المشاة الذين بدأوا العبور لهم الأولوية حتى لو الإشارة تحولت لصالحك.</div>`,
+    quiz:[
+      {q:'رأيت الضوء الأصفر وأنت بعيدة عن التقاطع — ماذا تفعلين؟',opts:['تسرعين للمرور قبل الأحمر','تتوقفين بأمان قبل خط الإيقاف','تواصلين بنفس السرعة','تضغطين على البوق'],cor:1},
+      {q:'ماذا يعني سهم انعطاف أخضر مع إشارة حمراء عامة؟',opts:['الانتظار حتى الأخضر','مسموح الانعطاف في اتجاه السهم فقط','ممنوع كل الحركة','مسموح التقدم للأمام'],cor:1},
+      {q:'المشاة بدأوا عبور التقاطع والإشارة تحوّلت لصالحك — ماذا تفعلين؟',opts:['تنطلقين فوراً','تنتظرين حتى يكملوا العبور','تضغطين على البوق','تتجاوزن من حولهم'],cor:1}
+    ]
+  },
+
+  { id:'l22', title:'إشارات الأولوية والإيقاف', dur:'8 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?stop,sign,road,yield,intersection&sig=8" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🛑</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">هاتان الإشارتان تتحكمان في التقاطعات التي ليس فيها إشارة ضوئية.</p>
+<div class="kc r"><div class="ki">🛑</div><p><strong>STOP — قفي</strong><br>مثمن أحمر. التوقف الكامل 3 ثوانٍ إلزامي حتى لو الطريق خالٍ تماماً.</p></div>
+<div class="kc y"><div class="ki">▽</div><p><strong>أعطِ الأولوية — Yield</strong><br>مثلث رأسه للأسفل. تباطأ وأعطِ الأولوية — التوقف الكامل فقط إذا كانت مركبات.</p></div>
+<div class="kc b"><div class="ki">ℹ️</div><p><strong>الفرق بينهما</strong><br>قف = توقف دائماً. أعطِ الأولوية = تباطأ، وتوقفي فقط إذا لزم.</p></div>
+<div class="kc r"><div class="ki">❗</div><p><strong>تجاهل STOP</strong><br>خصم نقاط + غرامة كبيرة + مسؤولية قانونية كاملة في أي حادث.</p></div>
+<div class="tip">💡 إشارة STOP: ثلاث ثوانٍ كاملة — عدّها بصوت لضمان التوقف الصحيح.</div>`,
+    quiz:[
+      {q:'ما الحد الأدنى للتوقف عند إشارة STOP؟',opts:['لمحة واحدة','ثانية واحدة','3 ثوانٍ كاملة','حسب الظروف'],cor:2},
+      {q:'ما شكل إشارة "أعطِ الأولوية"؟',opts:['مثمن أحمر','مثلث رأسه للأسفل','دائرة حمراء','مستطيل أصفر'],cor:1},
+      {q:'رأيت إشارة "أعطِ الأولوية" والطريق خالٍ تماماً — هل يجب التوقف الكامل؟',opts:['نعم دائماً','لا — التباطؤ يكفي إن كان الطريق خالياً','نعم في المدن فقط','حسب الوقت'],cor:1}
+    ]
+  },
+
+  { id:'l23', title:'اللافتات التحذيرية', dur:'9 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?warning,sign,yellow,triangle,road,caution&sig=9" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>⚠️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">اللافتات التحذيرية تُنبّهك لخطر قادم — التصرف الصحيح: تباطأ وكن مستعدة.</p>
+<div class="kc y"><div class="ki">⚠️</div><p><strong>الشكل الموحد</strong><br>مثلث ذهبي بحدود حمراء رأسه للأعلى. دائماً: تباطأ وزيدي تركيزك.</p></div>
+<div class="kc y"><div class="ki">🔄</div><p><strong>منعطف خطير</strong><br>خفّض السرعة قبل الدخول. لا تكبحي داخل المنعطف — ابطئي قبله.</p></div>
+<div class="kc y"><div class="ki">🚸</div><p><strong>منطقة مدرسة</strong><br>30 كم/ساعة حتى في العطل والإجازات — الأطفال يظهرون فجأة.</p></div>
+<div class="kc y"><div class="ki">🏔️</div><p><strong>منحدر شديد</strong><br>استخدم ترساً أدنى (L أو 2) بدل الاعتماد على الفرامل فقط لحمايتها.</p></div>
+<div class="tip">💡 اللافتة التحذيرية لا تُوقفك — لكنها تقول: أبطئي وكن جاهزة لأي شيء.</div>`,
+    quiz:[
+      {q:'ما شكل وألوان اللافتات التحذيرية؟',opts:['دائرة زرقاء','مثلث أصفر بحدود حمراء رأسه للأعلى','مثمن أحمر','مستطيل أخضر'],cor:1},
+      {q:'رأيت لافتة منحدر شديد — ما الإجراء الصحيح؟',opts:['الكبح القوي طوال الطريق','استخدام ترس أدنى وتجنب الاعتماد على الفرامل فقط','الإسراع لتجاوز المنحدر','تشغيل الفلاشر'],cor:1},
+      {q:'هل لافتة المدرسة تعني تخفيض السرعة في العطلة الصيفية أيضاً؟',opts:['لا — فقط أثناء الدراسة','نعم — دائماً انتبهي للأطفال في المنطقة','نعم في المساء فقط','حسب اللافتة المصاحبة'],cor:1}
+    ]
+  },
+
+  { id:'l24', title:'اللافتات الإلزامية والتحريمية', dur:'10 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?road,sign,mandatory,speed,limit,prohibition&sig=10" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🔵</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">لافتات الإلزام والحظر تُخبرك بما يجب وما يُمنع — لا خيار في اتباعها.</p>
+<div class="kc b"><div class="ki">🔵</div><p><strong>دائرة زرقاء = إلزام</strong><br>يجب تنفيذ ما عليها. مثال: سهم للأمام = يجب السير للأمام فقط.</p></div>
+<div class="kc r"><div class="ki">⛔</div><p><strong>دائرة حمراء = حظر</strong><br>ممنوع. رقم داخلها = حد السرعة الأقصى. سهم = ممنوع الانعطاف لذلك الاتجاه.</p></div>
+<div class="kc "><div class="ki">✂️</div><p><strong>خط مائل على لافتة</strong><br>يعني نهاية منطقة ذلك الحظر — يمكنك المتابعة بشكل طبيعي.</p></div>
+<div class="kc g"><div class="ki">📐</div><p><strong>الشكل يحدد المعنى</strong><br>مثلث = تحذير. دائرة = إلزام أو حظر. مستطيل = معلومات. تعلّم الأشكال أولاً.</p></div>
+<div class="tip">💡 رقم داخل دائرة حمراء = حد سرعة. رقم داخل دائرة بيضاء بحدود بيضاء = حد أدنى.</div>`,
+    quiz:[
+      {q:'دائرة زرقاء بسهم للأمام — ماذا تعني؟',opts:['يمكن السير للأمام','يجب السير للأمام فقط','ممنوع الانعطاف','اتجاه مقترح'],cor:1},
+      {q:'رقم داخل دائرة حمراء على لافتة — ماذا يعني؟',opts:['حد سرعة أدنى يجب الالتزام به','حد سرعة أقصى لا يجوز تجاوزه','عدد المسارات','المسافة للمدينة'],cor:1},
+      {q:'ما معنى خط أحمر مائل على لافتة حظر؟',opts:['تضاعف الحظر','نهاية منطقة ذلك الحظر','لافتة تالفة','بداية الحظر'],cor:1}
+    ]
+  },
+
+  { id:'l25', title:'خطوط الطريق ومعانيها', dur:'9 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?road,markings,lanes,lines,asphalt&sig=11" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🛣️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">خطوط الطريق لغة مرسومة على الأرض — اقرأها كما تقرئين الإشارات.</p>
+<div class="kc "><div class="ki">🟡</div><p><strong>خط أصفر مستمر</strong><br>يفصل الاتجاهين المتعاكسين — ممنوع التجاوز من أي جهة مطلقاً.</p></div>
+<div class="kc "><div class="ki">⚪</div><p><strong>خط أبيض متقطع</strong><br>بين المسارات — تغيير المسار مسموح عند الأمان.</p></div>
+<div class="kc r"><div class="ki">🔴</div><p><strong>خطوط حمراء على الرصيف</strong><br>ممنوع الوقوف والانتظار في أي وقت من اليوم.</p></div>
+<div class="kc "><div class="ki">⬜</div><p><strong>ممر المشاة (زيبرا)</strong><br>توقفي لأي شخص يقترب حتى لو لم يصل الممر بعد — لهم الأولوية المطلقة.</p></div>
+<div class="tip">💡 خط مستمر = ممنوع التجاوز. خط متقطع = يمكن التجاوز عند الأمان.</div>`,
+    quiz:[
+      {q:'ما معنى الخط الأصفر المستمر في منتصف الطريق؟',opts:['يمكن التجاوز بحذر','ممنوع التجاوز — اتجاهان معاكسان','مسار للحافلات','حافة الطريق'],cor:1},
+      {q:'ما معنى الخطوط الحمراء على حافة الرصيف؟',opts:['وقوف مؤقت جائز','ممنوع الوقوف والانتظار نهائياً','مسار خاص','منطقة أعمال'],cor:1},
+      {q:'عند ممر المشاة (الزيبرا) وليس هناك إشارة ضوئية — من له الأولوية؟',opts:['السيارة إذا كانت تتحرك','المشاة دائماً','من وصل أولاً','السيارة الأسرع'],cor:1}
+    ]
+  }
+
+]}, // end ch2
+
+// ══════════════════════════════════════
+// الفصل الثالث: قواعد الطريق
+// ══════════════════════════════════════
+{ id:'ch3', title:'قواعد الطريق', icon:'🛣️', lessons:[
+
+  { id:'l31', title:'قواعد الأولوية في التقاطعات', dur:'12 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,driving,road,basic,skills&sig=12" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🚗</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">قواعد السير الصحيحة هي أساس قيادة آمنة لك وللآخرين على الطريق.</p>
+<div class="kc b"><div class="ki">👀</div><p><strong>نظرتك المتنقلة</strong><br>كل 5-8 ثوانٍ انظر للمرايا. لا تثبّتي النظر للأمام فقط.</p></div>
+<div class="kc "><div class="ki">↗️</div><p><strong>التجاوز من اليسار فقط</strong><br>شروطه: خط متقطع + رؤية 400م + لا سيارات مقابلة + سرعة كافية.</p></div>
+<div class="kc g"><div class="ki">🔄</div><p><strong>قاعدة اليمين</strong><br>في التقاطعات بلا إشارات: القادمة من يمينك لها الأولوية دائماً.</p></div>
+<div class="kc r"><div class="ki">🚑</div><p><strong>الطوارئ</strong><br>صفارة سيارة طوارئ؟ انحرف يميناً فوراً وأوقف لإفساح المجال.</p></div>
+<div class="tip">💡 الأولوية في الدوار: من يسير داخل الدوار له الأولوية على الداخلين.</div>`,
+    quiz:[
+      {q:'في تقاطع بلا إشارات، سيارة قادمة من يمينك — من لها الأولوية؟',opts:['أنت لأنك على الطريق الرئيسي','القادمة من اليمين','من وصل أولاً','من تضغط على البوق'],cor:1},
+      {q:'أين تنظرين أولاً عند الاقتراب من تقاطع؟',opts:['للأمام فقط','يساراً','يميناً ثم أمام ثم يساراً','يساراً ثم يميناً'],cor:2},
+      {q:'سمعت صفارة سيارة إسعاف وراءك على طريق ضيق — ماذا تفعلين؟',opts:['تسرعين للخروج من طريقها','تنحرفين لليمين وتتوقفين لإفساح المجال','تستمرين بنفس السرعة','تشغّلين الفلاشر وتكملين'],cor:1}
+    ]
+  },
+
+  { id:'l32', title:'التجاوز الصحيح والآمن', dur:'11 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,speed,highway,distance,speedometer&sig=13" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🏎️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">السرعة الصحيحة والمسافة الأمنية هما الفارق بين رحلة آمنة وحادث مأساوي.</p>
+<div class="kc b"><div class="ki">🏙️</div><p><strong>داخل المدن</strong><br>50 كم/ساعة القاعدة العامة. مناطق المدارس: 30 كم/ساعة دائماً.</p></div>
+<div class="kc g"><div class="ki">⏱️</div><p><strong>قاعدة الثانيتين</strong><br>حين تتجاوز السيارة الأمامية نقطة ثابتة، عدّ 2 ثانية — يجب ألا تصلي قبلهما.</p></div>
+<div class="kc y"><div class="ki">🌧️</div><p><strong>في المطر</strong><br>ضاعفي المسافة = 4 ثوانٍ. في الجليد = 8-10 ثوانٍ كاملة.</p></div>
+<div class="kc r"><div class="ki">🛣️</div><p><strong>الطريق السريع</strong><br>100-120 كم/ساعة حسب اللافتة. المسافة: 3 ثوانٍ على الأقل.</p></div>
+<div class="tip">💡 الإيقاف عند 50 كم/ساعة يحتاج ~14م. عند 100 كم/ساعة يحتاج ~56م — أربعة أضعاف!</div>`,
+    quiz:[
+      {q:'ما الشرط الأول للتجاوز المسموح؟',opts:['السيارة بطيئة','خط متقطع ورؤية واضحة وأمان كامل','ليس هناك سيارة خلفك','السرعة العالية'],cor:1},
+      {q:'من أي جانب يتم التجاوز؟',opts:['اليمين دائماً','اليسار في معظم الدول','أي جانب حسب الظروف','الأوسط'],cor:1},
+      {q:'رأيت سيارة بطيئة في منحنى — هل تتجاوزنها؟',opts:['نعم إذا بدت آمنة','لا — المنحنيات ممنوع فيها التجاوز','نعم بسرعة','حسب سرعة السيارة'],cor:1}
+    ]
+  },
+
+  { id:'l33', title:'السرعة والمسافة الأمنية', dur:'10 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,overtaking,passing,two,lane,road&sig=14" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>↗️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">التجاوز من أكثر المناورات خطورة — افعليه صحيحاً أو لا تفعليه.</p>
+<div class="kc g"><div class="ki">✅</div><p><strong>شروط التجاوز المسموح</strong><br>خط متقطع + رؤية واضحة 400م + لا سيارات مقابلة + سرعتك كافية للتقدم.</p></div>
+<div class="kc r"><div class="ki">❌</div><p><strong>ممنوع التجاوز</strong><br>عند المنعطفات وقمم التلال والتقاطعات والخط الأصفر المستمر.</p></div>
+<div class="kc b"><div class="ki">📋</div><p><strong>خطوات التجاوز الآمن</strong><br>أشر يساراً → تحقق من المرايا والمنطقة العمياء → تجاوز → أشر يميناً → عد.</p></div>
+<div class="tip">💡 إذا شككت في أمان التجاوز — لا تتجاوز. الصبر أفضل من المجازفة.</div>`,
+    quiz:[
+      {q:'ما مسافة الإيقاف التقريبية عند 50 كم/ساعة؟',opts:['10 أمتار','35 متراً','5 أمتار','100م'],cor:1},
+      {q:'كم ثانية تستخدمين قاعدة المسافة الأمنية في المطر؟',opts:['ثانيتان','4 ثوانٍ','ثانية واحدة','حسب السرعة'],cor:1},
+      {q:'ماذا تعني قاعدة الثانيتين؟',opts:['تسوقين ثانيتين فقط','تتركين فاصل ثانيتين زمنياً بينك وبين السيارة أمامك','تنتظرين ثانيتين عند الإشارة','سرعة لا تزيد على ثانيتين'],cor:1}
+    ]
+  },
+
+  { id:'l34', title:'الانعطاف وتغيير المسار', dur:'9 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?roundabout,intersection,traffic,junction&sig=15" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🔄</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">التقاطعات والدوارات لها قواعد أولوية واضحة — اعرفها وتصرفي بثقة.</p>
+<div class="kc b"><div class="ki">🔄</div><p><strong>الدوار (الروندابو)</strong><br>من يسير داخل الدوار له الأولوية. اصبر حتى تكون مساحة آمنة ثم ادخل.</p></div>
+<div class="kc g"><div class="ki">🚌</div><p><strong>الحافلات والشاحنات</strong><br>تريد الخروج من المحطة أو تغيير المسار؟ تباطأ وامنحيها المجال.</p></div>
+<div class="kc "><div class="ki">🚶</div><p><strong>المشاة عند التقاطع</strong><br>حتى لو الإشارة تحولت لصالحك — انتظر المشاة حتى يُكملوا عبورهم.</p></div>
+<div class="kc r"><div class="ki">📐</div><p><strong>الانعطاف</strong><br>أشر 30م مسبقاً. يميناً: ابقَ في المسار الأيمن. يساراً: ادخل من الأيسر.</p></div>
+<div class="tip">💡 في التقاطع بلا إشارات: يمين → اليمين له الأولوية. هذه القاعدة العالمية.</div>`,
+    quiz:[
+      {q:'ما اختصار SMOG في تسلسل الانعطاف؟',opts:['Speed, Mirror, Others, Go','Signal, Mirror, Over-shoulder, Go','Stop, Mirror, Observe, Go','Signal, Move, Observe, Gear'],cor:1},
+      {q:'لماذا الانعطاف يساراً أخطر من اليميني؟',opts:['لأنه أطول','لأنك تقطعين مسار السيارات المقابلة','لأن الإشارة أصعب','لا فرق'],cor:1},
+      {q:'قبل كم متراً تبدئين الإشارة للانعطاف؟',opts:['5 أمتار','30 متراً على الأقل','100م','عند بدء الانعطاف'],cor:1}
+    ]
+  },
+
+  { id:'l35', title:'القيادة على الطريق السريع', dur:'11 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?parking,car,street,parallel,city&sig=16" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🅿️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">الوقوف في المكان الصحيح يحمي السيارة ويحافظ على حقوق الآخرين.</p>
+<div class="kc b"><div class="ki">🅿️</div><p><strong>الركن الجانبي الصحيح</strong><br>30 سم أو أقل من الرصيف. أبعد من ذلك = مخالفة وإزعاج للمرور.</p></div>
+<div class="kc r"><div class="ki">🚫</div><p><strong>أماكن الحظر المطلق</strong><br>أمام الهيدرانت + عند التقاطعات + الخطوط الحمراء + مخارج الطوارئ. لا استثناء.</p></div>
+<div class="kc g"><div class="ki">⚠️</div><p><strong>الرجوع بأمان</strong><br>فلاشر → تحقق بعينيك → الكاميرا مساعد فقط → ابطئي → تحركي.</p></div>
+<div class="kc "><div class="ki">🔒</div><p><strong>قبل المغادرة</strong><br>أطفئ كل شيء. أشبكي الهاندبريك في المنحدرات. قفّل السيارة.</p></div>
+<div class="tip">💡 الركن الموازي (Parallel Parking): إشارة → مرآة → الخلف → توجيه → تسوية.</div>`,
+    quiz:[
+      {q:'كيف تدخلين الطريق السريع بأمان؟',opts:['التوقف وانتظار فرجة','استخدام ممر التسارع ومطابقة سرعة الحركة','الدخول ببطء','الدخول بحزم وبشكل مفاجئ'],cor:1},
+      {q:'لماذا يُمنع السير ببطء في المسار الأيسر للطريق السريع؟',opts:['لأنه ممنوع قانوناً فقط','لأنه يُعيق التجاوز ويسبب حوادث','لأن المسار الأيسر للطوارئ','لا مانع من السير ببطء'],cor:1},
+      {q:'تعطلت سيارتك على الطريق السريع — أين تقفين؟',opts:['في المسار الأيمن','في المسار الأوسط','على الكتف الجانبي بالكامل','أي مكان ممكن'],cor:2}
+    ]
+  }
+
+]}, // end ch3
+
+// ══════════════════════════════════════
+// الفصل الرابع: السلامة المرورية
+// ══════════════════════════════════════
+{ id:'ch4', title:'السلامة المرورية', icon:'🦺', lessons:[
+
+  { id:'l41', title:'القيادة في الظروف الصعبة', dur:'11 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?rain,wet,road,car,driving,puddle&sig=17" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🌧️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">المطر يُقلل الإمساك بالطريق ويُقلل الرؤية — قللي السرعة وزيدي المسافة.</p>
+<div class="kc b"><div class="ki">🌧️</div><p><strong>تباطأ وزيدي المسافة</strong><br>الطريق المبلل يُطيل مسافة التوقف — قللي السرعة 20-30 كم وزيدي مسافتك.</p></div>
+<div class="kc r"><div class="ki">💧</div><p><strong>الاستواء المائي (Aquaplaning)</strong><br>فقدان التحكم فجأة على ماء؟ أفلت الدواسة بهدوء، لا تكبحي فجأة، وجّه باسترخاء.</p></div>
+<div class="kc y"><div class="ki">🌫️</div><p><strong>الضباب</strong><br>مصابيح الضباب + أضواء قريبة. لا أضواء بعيدة (تعكس) ولا فلاشر (يُضلّل).</p></div>
+<div class="kc g"><div class="ki">❄️</div><p><strong>الجليد والثلج</strong><br>مسافة 8-10 ثوانٍ. ترس أدنى. لا تكبحي فجأة. إذا كان الطريق خطيراً — توقفي.</p></div>
+<div class="tip">💡 إذا فقدت التحكم على الجليد: أفلت كل شيء، توجّه بهدوء، لا تُبالغي في التصحيح.</div>`,
+    quiz:[
+      {q:'ماذا تفعلين إذا بدأت سيارتك بالانزلاق فوق بركة ماء (Aquaplaning)؟',opts:['تكبحين بقوة','تفلتين الدواسة تدريجياً وتُبقين المقود مستقيماً','تسرعين','تنعطفين بحدة'],cor:1},
+      {q:'لماذا لا تستخدمين الأضواء البعيدة في الضباب؟',opts:['إرهاق العينين','تعكس الضوء وتقلل رؤيتك وتُعمي الآخرين','تسبب حرارة للمحرك','ممنوعة قانونياً'],cor:1},
+      {q:'ما المسافة الأمنية في الجليد مقارنة بالطريق الجاف؟',opts:['نفسها','ضعفان فقط','8-10 أضعاف','حسب السرعة فقط'],cor:2}
+    ]
+  },
+
+  { id:'l42', title:'التصرف في حالات الطوارئ', dur:'12 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?night,driving,road,headlights,dark&sig=18" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🌙</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">الرؤية ليلاً تنخفض 75% — القيادة الليلية تحتاج تركيزاً ضعف النهار.</p>
+<div class="kc b"><div class="ki">💡</div><p><strong>الأضواء القريبة</strong><br>استخدمها ليلاً في الشوارع والطرق المضاءة وعند رؤية سيارات.</p></div>
+<div class="kc y"><div class="ki">🔦</div><p><strong>الأضواء البعيدة</strong><br>للطرق المظلمة الخالية فقط. خفّضها حين ترين سيارة على بُعد 150م.</p></div>
+<div class="kc r"><div class="ki">😴</div><p><strong>النعاس = خطر قاتل</strong><br>التوقف 20 دقيقة والنوم هو الحل الوحيد. القهوة تمنح 30 دقيقة فقط.</p></div>
+<div class="kc g"><div class="ki">🌙</div><p><strong>قللي السرعة</strong><br>نعم حتى لو الطريق خالٍ. وقت التفاعل مع أي مفاجأة أطول في الليل.</p></div>
+<div class="tip">💡 قبل رحلة ليلية طويلة: نمي جيداً، خذي استراحة كل ساعتين.</div>`,
+    quiz:[
+      {q:'انفجر إطار سيارتك فجأة — ما أول شيء تفعلينه؟',opts:['الكبح بقوة فوراً','الإمساك بالمقود بكلتا اليدين وإفلات دواسة الوقود تدريجياً','الانعطاف بسرعة','رفع يديك'],cor:1},
+      {q:'رأيت دخاناً يخرج من محرك سيارتك — ماذا تفعلين؟',opts:['تسرعين للوصول','تنحرفين لليمين وتطفئين المحرك وتبتعدين','تفتحين غطاء المحرك فوراً','تواصلين القيادة حتى المنزل'],cor:1},
+      {q:'شعرت بنعاس شديد أثناء القيادة — ما الحل؟',opts:['تشرعين نافذة','تشربين قهوة','تتوقفين في مكان آمن وتنامين 20 دقيقة','تواصلين القيادة بتركيز'],cor:2}
+    ]
+  },
+
+  { id:'l43', title:'المشاة والدراجات والدراجات النارية', dur:'10 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?city,traffic,urban,street,pedestrian&sig=19" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🏙️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">القيادة في المدينة تعني مشاة ودراجات وتقاطعات كثيرة — كن يقظة دائماً.</p>
+<div class="kc b"><div class="ki">🚶</div><p><strong>المشاة والدراجات</strong><br>دائماً توقعي ظهورهم من أي مكان — الأزقة والممرات والتقاطعات.</p></div>
+<div class="kc g"><div class="ki">🅿️</div><p><strong>الركن في المدينة</strong><br>لا تتوقفي في أماكن تُعيق الحركة. ابحث عن موقف حتى لو بعيداً قليلاً.</p></div>
+<div class="kc r"><div class="ki">📍</div><p><strong>التقاطعات الكثيرة</strong><br>أبطئي مسبقاً وتحقق يميناً ويساراً حتى مع الإشارة الخضراء.</p></div>
+<div class="kc "><div class="ki">🚌</div><p><strong>الحافلات والشاحنات</strong><br>لا تقطعي طريقها. أعطِها مساحة كبيرة عند الانعطاف — نقطتها العمياء ضخمة.</p></div>
+<div class="tip">💡 القيادة البطيئة في المدينة ليست ضعفاً — هي السلوك الصحيح والآمن.</div>`,
+    quiz:[
+      {q:'ما المسافة الجانبية الدنيا عند تجاوز دراجة هوائية؟',opts:['30 سم','نصف متر','متر واحد كامل','حسب السرعة'],cor:2},
+      {q:'عند الانعطاف يميناً — ماذا تتحققن منه خاصةً؟',opts:['السيارات الكبيرة خلفك','الدراجات على يمينك','الأضواء أمامك','سرعتك'],cor:1},
+      {q:'لماذا الدراجات النارية أخطر من السيارات في منطقتك العمياء؟',opts:['لأنها سريعة جداً','لأنها صغيرة وقد لا تظهر في المرآة','لأن سائقيها متهورون','لأنها ضوضاء'],cor:1}
+    ]
+  },
+
+  { id:'l44', title:'الوثائق المطلوبة وإجراءات الحوادث', dur:'9 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?motorway,highway,fast,cars,lanes&sig=20" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🛣️</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">الطريق السريع يحتاج قواعد مختلفة — الدخول والخروج الخاطئان يُسببان حوادث خطيرة.</p>
+<div class="kc g"><div class="ki">⬆️</div><p><strong>الدخول الآمن</strong><br>ممر التسارع موجود لمطابقة سرعة الطريق. لا تتوقفي فيه — هذا يُسبب حوادث.</p></div>
+<div class="kc b"><div class="ki">🛣️</div><p><strong>قاعدة المسارات</strong><br>الأيمن للسير العادي. الأيسر للتجاوز فقط — لا تسِر ببطء في المسار الأيسر.</p></div>
+<div class="kc r"><div class="ki">🆘</div><p><strong>العطل على الطريق</strong><br>على الكتف الأيمن كاملاً + فلاشر + مثلث 30م خلف + اخرجي من الجانب الأيمن.</p></div>
+<div class="kc y"><div class="ki">📏</div><p><strong>المسافة الأمنية</strong><br>3 ثوانٍ كحد أدنى. في المطر: 5 ثوانٍ. بين الشاحنات: 4 ثوانٍ.</p></div>
+<div class="tip">💡 الخروج: أشر مبكراً + مسار أيمن + تباطأ في ممر التباطؤ وليس في الطريق.</div>`,
+    quiz:[
+      {q:'ما أول شيء تفعلينه بعد حادث بلا إصابات؟',opts:['الاتصال بالتأمين فوراً','تأمين المكان بالفلاشر والمثلث ثم التصوير','مغادرة الموقع','تحريك السيارات لإزالة الازدحام'],cor:1},
+      {q:'هل يجوز مغادرة موقع الحادث الذي فيه مصابون؟',opts:['نعم إذا لم تكن المسؤولة','لا — مغادرة الموقع جريمة','نعم إذا استدعيت الإسعاف','حسب خطورة الإصابة'],cor:1},
+      {q:'ما الوثائق الثلاث الإلزامية في السيارة؟',opts:['رخصة القيادة فقط','رخصة + تسجيل + تأمين','هوية + رخصة','لا يوجد إلزام'],cor:1}
+    ]
+  },
+
+  { id:'l45', title:'صيانة السيارة الأساسية', dur:'10 دقائق', free:false,
+    content:`<h3>🔧 الصيانة الأساسية للقائدة</h3>
+<p>لا تحتاجين لتكون ميكانيكية — لكن هذه الفحوصات البسيطة تمنع أعطالاً مفاجئة خطيرة.</p>
+<div class="kc g"><div class="ki">🛞</div><p><strong>الإطارات — فحص أسبوعي</strong><br>• الضغط: راجعيه باردة (بعد توقف 3 ساعات). المناسب: 30-35 PSI للمعظم<br>• الأخاديد: لا تقل عن 1.6مم (اختبار العملة المعدنية)<br>• الإطار المنفوخ زيادة أو ناقصاً = خطر الانزلاق</p></div>
+<div class="kc b"><div class="ki">💧</div><p><strong>السوائل — فحص شهري</strong><br>• زيت المحرك: المستوى بين Min و Max — غيّريه كل 5000-10000 كم<br>• ماء الرادياتير: المستوى المناسب بارداً<br>• سائل الفرامل: لا تُفتحيه بمفردك<br>• ماء غسيل الزجاج: سهل الإعادة</p></div>
+<div class="kc y"><div class="ki">🔋</div><p><strong>البطارية — علامات الضعف</strong><br>• بطء في الإشعال<br>• أضواء تخبو<br>• طقطقة عند الإشعال<br>عمر البطارية: 3-5 سنوات</p></div>
+<div class="kc r"><div class="ki">💡</div><p><strong>المصابيح — فحص شهري</strong><br>المصباح المحروق = مخالفة. تحقق من: أضواء أمامية، خلفية، إشارات انعطاف، فرامل، ضباب.</p></div>`,
+    quiz:[
+      {q:'متى تفحصين ضغط الإطارات بشكل صحيح؟',opts:['مباشرة بعد القيادة','بعد 3 ساعات توقف كاملة — الإطار بارد','في أي وقت','قبل الرحلة الطويلة فقط'],cor:1},
+      {q:'ما علامة اقتراب عمر البطارية من النهاية؟',opts:['ارتفاع استهلاك الوقود','بطء في الإشعال وأضواء خافتة','ضوضاء من المحرك','ارتفاع حرارة السيارة'],cor:1},
+      {q:'كم كيلومتراً تُغيّر فيه زيت المحرك تقريباً؟',opts:['كل 1000 كم','كل 5000-10000 كم حسب نوع الزيت','كل سنة ثابتة','لا يحتاج تغييراً منتظماً'],cor:1}
+    ]
+  }
+
+]}, // end ch4
+
+// ══════════════════════════════════════
+// الفصل الخامس: المناورات العملية
+// ══════════════════════════════════════
+{ id:'ch5', title:'المناورات العملية', icon:'🔄', lessons:[
+
+  { id:'l51', title:'الانطلاق والتوقف الصحيح', dur:'9 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,accident,emergency,road,crash&sig=21" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>💥</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">معرفة كيف تتصرفين في الطوارئ قد تُنقذ حياتك وحياة الآخرين.</p>
+<div class="kc r"><div class="ki">💥</div><p><strong>بعد الحادث</strong><br>أوقف + فلاشر + تحقق من إصابات + اتصل بالطوارئ + صوّر قبل تحريك أي سيارة.</p></div>
+<div class="kc r"><div class="ki">🔥</div><p><strong>دخان/حريق</strong><br>أوقف + أطفئ المحرك + ابتعد 50م + لا تفتحي الغطاء + اتصل بالإطفاء.</p></div>
+<div class="kc b"><div class="ki">💨</div><p><strong>انفجار الإطار</strong><br>أمسك المقود بقوة + أفلت الدواسة + أبطئي تدريجياً + انحرف يميناً بهدوء. لا تكبحي فجأة.</p></div>
+<div class="kc g"><div class="ki">💧</div><p><strong>فشل الفرامل</strong><br>غيّر لترس أدنى + مكبح اليد بلطف تدريجياً + وجّه نحو توقف آمن.</p></div>
+<div class="tip">💡 مغادرة موقع حادث فيه مصابون جريمة قانونية في كل دول العالم — لا تغادري.</div>`,
+    quiz:[
+      {q:'ما أول شيء تتحققن منه قبل الانطلاق؟',opts:['الوقود','المقعد والمرايا والحزام','الإشارة','الطريق أمامك'],cor:1},
+      {q:'كيف تكبحين بشكل صحيح؟',opts:['بقوة دفعة واحدة','بنعومة تدريجية ومتصاعدة','بالتقطيع','بمكبح اليد'],cor:1},
+      {q:'أين تتوقفين بالضبط عند إشارة حمراء؟',opts:['على خط الإيقاف الأبيض','قبل خط الإيقاف','بعد خط الإيقاف','قريباً من السيارة الأمامية'],cor:0}
+    ]
+  },
+
+  { id:'l52', title:'الركن والوقوف', dur:'12 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,breakdown,road,tow,truck,stranded&sig=22" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🆘</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">العطل المفاجئ مُرهق ومقلق — اتبعي هذه الخطوات لتأمين نفسك أولاً.</p>
+<div class="kc r"><div class="ki">⚠️</div><p><strong>التأمين أولاً</strong><br>فلاشر + مثلث تحذيري 30م خلف السيارة + ابقَ على الرصيف بعيداً عن الطريق.</p></div>
+<div class="kc b"><div class="ki">📞</div><p><strong>اطلبي المساعدة</strong><br>اتصل بخدمة المساعدة على الطريق. لا تحاول إصلاحاً لا تعرّفنه.</p></div>
+<div class="kc r"><div class="ki">🛣️</div><p><strong>على الطريق السريع</strong><br>لا تبقي داخل السيارة — اخرجي وابتعد من الجانب الأيمن البعيد عن الحركة.</p></div>
+<div class="kc "><div class="ki">🌙</div><p><strong>في الليل</strong><br>أضف أضواء تحذيرية إضافية. ابقَ في مكان مضاء. اتصل بشخص تثقين به.</p></div>
+<div class="tip">💡 إذا لم يكن التأمين متاحاً: ابتعد عن السيارة وانتظر المساعدة في مكان آمن.</div>`,
+    quiz:[
+      {q:'ما المسافة المثالية من الرصيف عند الوقوف الجانبي؟',opts:['أي مسافة مريحة','30 سم أو أقل','متر كامل','حسب حجم السيارة'],cor:1},
+      {q:'أين يُمنع الوقوف دائماً؟',opts:['على الطرق الجانبية','أمام الهيدرانت والتقاطعات والخطوط الحمراء','في المناطق السكنية','في الليل'],cor:1},
+      {q:'في الركن الجانبي الخلفي — متى تبدئين بتقويم المقود؟',opts:['فوراً','عندما ترين السيارة الخلفية في منتصف المرآة الجانبية','بعد التوقف الكامل','عندما تشعرين أن الزاوية مناسبة'],cor:1}
+    ]
+  },
+
+  { id:'l53', title:'الدوارات والاستدارة', dur:'9 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?car,tire,maintenance,check,mechanic&sig=23" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>🔧</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">صيانة بسيطة منتظمة تُجنّبك أعطالاً مكلفة وخطيرة على الطريق.</p>
+<div class="kc b"><div class="ki">🛞</div><p><strong>الإطارات أسبوعياً</strong><br>افحص الضغط وهي باردة (3 ساعات بعد الإيقاف). الضغط الخاطئ يُقلل التحكم.</p></div>
+<div class="kc y"><div class="ki">💡</div><p><strong>المصابيح</strong><br>افحصها أسبوعياً. مصباح محروق = مخالفة مرورية + خطر ليلي حقيقي.</p></div>
+<div class="kc r"><div class="ki">🔋</div><p><strong>البطارية</strong><br>بطء في الإشعال + أضواء خافتة = بطارية ضعيفة. عمرها 3-5 سنوات.</p></div>
+<div class="kc g"><div class="ki">💧</div><p><strong>السوائل شهرياً</strong><br>الزيت + ماء التبريد + سائل الفرامل + سائل التوجيه — أي نقص فيها = خطر.</p></div>
+<div class="tip">💡 إطار بضغط أقل 20% من الصحيح يزيد استهلاك الوقود 10% ويُقلل عمر الإطار.</div>`,
+    quiz:[
+      {q:'من لها الأولوية في الدوار؟',opts:['الداخلة','المركبات التي هي داخل الدوار','الأسرع','من أشارت أولاً'],cor:1},
+      {q:'عند أي مخرج تستخدمين المسار الأيمن في الدوار؟',opts:['الاستدارة','المخرج الأول والثاني','المخرج الثالث','كل المخارج'],cor:1},
+      {q:'متى تُشيرين يميناً في الدوار؟',opts:['عند الدخول','قبل الخروج بمسار واحد','عند منتصف الدوار','لا داعي للإشارة في الدوارات'],cor:1}
+    ]
+  },
+
+  { id:'l54', title:'القيادة الليلية والتعب', dur:'8 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?driving,license,document,car,registration&sig=24" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>📄</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">الوثائق الصحيحة تحميك قانونياً وتُسهّل التعامل في الحوادث والمخالفات.</p>
+<div class="kc b"><div class="ki">📄</div><p><strong>الإلزامي دائماً معك</strong><br>رخصة القيادة + وثيقة تسجيل السيارة + شهادة التأمين. بدون واحدة منها = مخالفة.</p></div>
+<div class="kc r"><div class="ki">📸</div><p><strong>بعد الحادث</strong><br>صوّر كل شيء قبل تحريك أي سيارة. التصوير هو أهم خطوة للتأمين.</p></div>
+<div class="kc "><div class="ki">📱</div><p><strong>الجوال أثناء القيادة</strong><br>استخدامه باليد = غرامة + خصم نقاط في معظم الدول. استخدم Handsfree.</p></div>
+<div class="kc g"><div class="ki">🚔</div><p><strong>عند الوقوف للشرطة</strong><br>توقفي بهدوء في مكان آمن. أطفئ المحرك. وثائقك جاهزة.</p></div>
+<div class="tip">💡 التأمين الشامل يُغطي أضرار سيارتك وسيارات الآخرين. الإلزامي يُغطي الآخرين فقط.</div>`,
+    quiz:[
+      {q:'بكم تنخفض قدرة الرؤية في الليل مقارنة بالنهار؟',opts:['25%','50%','75%','10%'],cor:2},
+      {q:'عُمّيت بأضواء سيارة مقابلة — ماذا تفعلين؟',opts:['تنظرين مباشرةً للأضواء','تُبطئين وتنظرين لحافة الطريق اليمنى','تشغّلين أضواءك البعيدة','تتوقفين فوراً'],cor:1},
+      {q:'كم ساعة قيادة بعدها يجب التوقف للراحة؟',opts:['4 ساعات','6 ساعات','ساعتان','ساعة واحدة'],cor:2}
+    ]
+  },
+
+  { id:'l55', title:'التحضير للاختبار الرسمي', dur:'10 دقائق', free:false,
+    content:`<div style="width:100%;height:200px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#EDE6F8,#F8E8F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<img src="https://source.unsplash.com/800x400/?driving,respect,safe,behavior,road&sig=25" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:60px;&quot;>😊</span>'">
+</div>
+<p style="color:#4A3060;font-size:14px;line-height:1.75;margin:0 0 10px;">القيادة الجيدة ليست مهارة فقط — هي أخلاق واحترام للآخرين على الطريق.</p>
+<div class="kc g"><div class="ki">😊</div><p><strong>الهدوء أولاً</strong><br>الغضب والتعصب يُشتتان الانتباه ويُسببان الحوادث. خذي نفساً وكن صبورة.</p></div>
+<div class="kc r"><div class="ki">📵</div><p><strong>لا جوال باليد أبداً</strong><br>حتى عند الإشارة الحمراء. استخدم Handsfree أو أوقف السيارة.</p></div>
+<div class="kc b"><div class="ki">👀</div><p><strong>التركيز الكامل</strong><br>لا أكل، لا حديث طويل، لا موسيقى عالية جداً أثناء القيادة.</p></div>
+<div class="kc "><div class="ki">🤝</div><p><strong>احترام الجميع</strong><br>المشاة والدراجات والسيارات الأبطأ — كلهم يستحقون مساحتهم الآمنة.</p></div>
+<div class="tip">💡 القائد المحترف لا يُسابق ولا يضغط على الآخرين — يصل بأمان دائماً.</div>`,
+    quiz:[
+      {q:'ما النسبة المطلوبة عادةً للنجاح في الاختبار النظري؟',opts:['50%','60%','70-80%','100%'],cor:2},
+      {q:'كم تستغرق عادةً مدة الاختبار العملي؟',opts:['10 دقائق','30-45 دقيقة','ساعة كاملة','حسب المحافظة'],cor:1},
+      {q:'ماذا تفعلين إذا أخطأت خلال الاختبار العملي؟',opts:['تطلبين إيقاف الاختبار','تنهارين وتعتذرين','تستمرين بهدوء — خطأ واحد لا يعني الرسوب','تخبرين المراقب فوراً'],cor:2}
+    ]
+  }
+
+]} // end ch5
+
+]; // end CHAPTERS
+
+const QUESTIONS = [
+  // ── إشارات ضوئية ──
+  {ic:'🚦',img:'traffic light red green intersection',fa:'fa-traffic-light',q:'ماذا تعني الإشارة الضوئية الحمراء؟',o:['التباطؤ فقط','التوقف التام','المرور بحذر','الاستعداد'],c:1,x:'الإشارة الحمراء تعني التوقف التام قبل خط الإيقاف دون أي استثناء.'},
+  {ic:'🟡',img:'traffic light yellow amber road',fa:'fa-circle',q:'رأيت الضوء الأصفر وأنت بعيدة عن التقاطع — ماذا تفعلين؟',o:['تسرعين للمرور قبل الأحمر','تتوقفين بأمان','تواصلين بنفس السرعة','تنبّهين بالبوق'],c:1,x:'الأصفر يعني استعدي للتوقف. الإسراع خطر ومخالفة.'},
+  {ic:'🔴',img:'stop sign red road junction',fa:'fa-circle-stop',q:'ماذا تعني الإشارة الحمراء الوامضة عند التقاطع؟',o:['التباطؤ والمرور','المرور بحذر','التوقف التام كإشارة قف','الاستعداد'],c:2,x:'الأحمر الوامض = توقف تام، تماماً مثل إشارة STOP.'},
+  {ic:'🟡',img:'traffic light yellow amber road',fa:'fa-circle',q:'ماذا يعني الضوء الأصفر الوامض؟',o:['توقفي تاماً','تباطأ ومري بحذر','الطريق مغلق','اتصل بالشرطة'],c:1,x:'الأصفر الوامض = تحذير، تباطأ وامري بحذر — لا توقف كامل.'},
+  {ic:'🟢',img:'green traffic light pedestrian crossing',fa:'fa-circle-play',q:'المشاة بدأوا العبور والإشارة تحوّلت لصالحك — ماذا تفعلين؟',o:['تنطلقين فوراً','تنتظرين حتى يكملوا','تضغطين على البوق','تتجاوزن من حولهم'],c:1,x:'المشاة الذين بدأوا العبور لهم الأولوية حتى لو الإشارة للسيارات.'},
+  {ic:'🔵',img:'road sign blue mandatory direction',fa:'fa-circle-info',q:'سهم أخضر للانعطاف يساراً مع إشارة حمراء عامة — ماذا يعني؟',o:['انتظر الأخضر العام','مسموح الانعطاف يساراً فقط','ممنوع كل الحركة','مسموح التقدم للأمام'],c:1,x:'سهم الانعطاف الأخضر يسمح بالانعطاف في اتجاهه فقط حتى مع الأحمر العام.'},
+
+  // ── لافتات ──
+  {ic:'🛑',img:'stop sign red octagon road',fa:'fa-hand',q:'ما شكل إشارة STOP وماذا تعني بالضبط؟',o:['مثلث أصفر — تباطأ','مثمن أحمر — توقف 3 ثوانٍ كاملة','دائرة حمراء — ممنوع','مستطيل — معلومات'],c:1,x:'إشارة STOP مثمنة حمراء. التوقف الكامل 3 ثوانٍ إلزامي حتى لو الطريق خالياً.'},
+  {ic:'▽',img:'yield sign road give way',fa:'fa-triangle-exclamation',q:'ما شكل إشارة "أعطِ الأولوية" ومتى تتوقفين كلياً؟',o:['مثمن أحمر — دائماً','مثلث رأسه للأسفل — فقط إذا لزم','دائرة زرقاء — أبداً','مثلث أصفر رأسه للأعلى — دائماً'],c:1,x:'مثلث رأسه للأسفل = أعطِ الأولوية. التوقف الكامل فقط إذا كانت هناك مركبات.'},
+  {ic:'⚠️',img:'warning sign yellow triangle road',fa:'fa-triangle-exclamation',q:'ما لون وشكل اللافتات التحذيرية؟',o:['دائرة زرقاء','مثمن أحمر','مثلث أصفر/ذهبي بحدود حمراء رأسه للأعلى','مستطيل أخضر'],c:2,x:'التحذيرية: مثلث ذهبي رأسه للأعلى بحدود حمراء — تحذير من خطر قادم.'},
+  {ic:'🔵',img:'road sign blue mandatory direction',fa:'fa-circle-info',q:'دائرة زرقاء بسهم للأمام على لافتة — ماذا تعني؟',o:['يمكن السير للأمام','يجب السير للأمام فقط','ممنوع الانعطاف','اتجاه مقترح'],c:1,x:'الدائرة الزرقاء = إلزام. يجب تنفيذ ما هو مرسوم عليها.'},
+  {ic:'⛔',img:'prohibition sign speed limit road',fa:'fa-ban',q:'رقم 50 داخل دائرة حمراء على لافتة — ماذا يعني؟',o:['حد سرعة أدنى','حد سرعة أقصى = ممنوع تجاوز 50 كم/ساعة','عدد المسارات','المسافة للمدينة'],c:1,x:'رقم داخل دائرة حمراء = حد سرعة أقصى. ممنوع تجاوزه.'},
+  {ic:'✂️',img:'road sign end zone',fa:'fa-scissors',q:'ما معنى خط أحمر مائل على لافتة حظر؟',o:['تضاعف الحظر','نهاية منطقة ذلك الحظر','لافتة تالفة','بداية منطقة أخطر'],c:1,x:'الخط المائل على لافتة الحظر = نهاية منطقة ذلك الحظر.'},
+
+  // ── خطوط الطريق ──
+  {ic:'🟡',img:'traffic light yellow amber road',fa:'fa-circle',q:'ما معنى الخط الأصفر المستمر في منتصف الطريق؟',o:['يمكن التجاوز بحذر','ممنوع التجاوز مطلقاً — اتجاهان معاكسان','مسار للحافلات','حافة الطريق'],c:1,x:'الخط الأصفر المستمر يفصل الاتجاهين المعاكسين. التجاوز ممنوع تماماً.'},
+  {ic:'⚪',img:'car road driving safe',fa:'fa-minus',q:'ما معنى الخط الأبيض المتقطع بين المسارات؟',o:['ممنوع تجاوزه','يمكن تغيير المسار أو التجاوز عند الأمان','مسار للدراجات','منطقة أعمال'],c:1,x:'الخط الأبيض المتقطع يسمح بتغيير المسار عند الأمان.'},
+  {ic:'🔴',img:'stop sign red road junction',fa:'fa-circle-stop',q:'ما معنى الخطوط الحمراء على حافة الرصيف؟',o:['وقوف مؤقت جائز','ممنوع الوقوف والانتظار نهائياً','مسار الحافلات','منطقة خاصة'],c:1,x:'الخطوط الحمراء على الرصيف = حظر الوقوف والانتظار في أي وقت.'},
+  {ic:'⬜',img:'zebra crossing pedestrian walkway',fa:'fa-pedestrian',q:'ما واجبك عند ممر المشاة (الزيبرا) بلا إشارة ضوئية؟',o:['الاستمرار إذا لم يكن هناك مشاة','التوقف الكامل لأي شخص يقترب من الممر','الانتظار فقط إذا وصل المشاة','تقليل السرعة فقط'],c:1,x:'ممر المشاة يمنح المشاة الأولوية المطلقة — توقفي حتى لو كانوا على حافة الطريق.'},
+
+  // ── أولوية المرور ──
+  {ic:'🔄',img:'roundabout intersection traffic circle',fa:'fa-rotate',q:'في تقاطع بلا إشارات — سيارة قادمة من يمينك — من لها الأولوية؟',o:['أنت لأنك الأكبر','القادمة من اليمين دائماً','من وصل أولاً','الأسرع'],c:1,x:'قاعدة اليمين الأساسية: في التقاطعات بلا إشارات، اليمين له الأولوية.'},
+  {ic:'🔵',img:'road sign blue mandatory direction',fa:'fa-circle-info',q:'من لها الأولوية في الدوار (الروندابو)؟',o:['السيارة الداخلة','من هم سائرون داخل الدوار','الأسرع','من أشارت أولاً'],c:1,x:'المركبات التي تسير داخل الدوار لها الأولوية على الداخلات.'},
+  {ic:'🚑',img:'car road driving safe',fa:'fa-truck-medical',q:'سمعت صفارة سيارة إسعاف خلفك في شارع ضيق — ماذا تفعلين؟',o:['تسرعين للخروج من طريقها','تنحرفين لليمين وتتوقفين لإفساح المجال','تستمرين بنفس السرعة','تشغّلين الفلاشر وتكملين'],c:1,x:'مركبات الطوارئ لها الأولوية المطلقة. انحرف لليمين وأفسحي المجال.'},
+  {ic:'🚌',img:'car road driving safe',fa:'fa-bus',q:'حافلة تحاول الخروج من المحطة وأشارت يساراً — ماذا تفعلين في الغالب؟',o:['تتجاوزنها بسرعة','تبطئين وتسمحين لها بالخروج','تضغطين على البوق','تتجاهلين إشارتها'],c:1,x:'في كثير من الدول، الحافلة لها الأولوية عند الخروج من المحطة إذا أشارت.'},
+
+  // ── السرعة والمسافة ──
+  {ic:'🏙️',img:'city urban traffic street',fa:'fa-city',q:'ما الحد الأقصى للسرعة المعتاد داخل المدن؟',o:['40 كم/ساعة','50 كم/ساعة','80 كم/ساعة','100 كم/ساعة'],c:1,x:'الحد المعتاد داخل المدن 50 كم/ساعة ما لم تحدد لافتة خلاف ذلك.'},
+  {ic:'🚸',img:'speed car road distance',fa:'fa-children',q:'ما السرعة القصوى المعتادة في مناطق المدارس؟',o:['50 كم/ساعة','40 كم/ساعة','30 كم/ساعة','20 كم/ساعة'],c:2,x:'المدارس 30 كم/ساعة لحماية الأطفال. هذا إلزامي حتى في العطل.'},
+  {ic:'⏱️',img:'speed car road distance',fa:'fa-stopwatch',q:'ما قاعدة الثانيتين في المسافة الأمنية؟',o:['قودي ثانيتين فقط','افصلي ثانيتين زمنياً عن السيارة أمامك','انتظر ثانيتين عند الإشارة','لا تتجاوز ثانيتين في التجاوز'],c:1,x:'عندما تتجاوز السيارة الأمامية نقطة ثابتة، يجب ألا تصلي أنت لها قبل انتهاء عد ثانيتين.'},
+  {ic:'🌧️',img:'rain wet road car driving',fa:'fa-cloud-rain',q:'كم تكون المسافة الأمنية المناسبة في المطر؟',o:['نفسها — ثانيتان','ضعفان — 4 ثوانٍ','3 أضعاف','10 ثوانٍ'],c:1,x:'في المطر ضاعفي المسافة = 4 ثوانٍ. في الجليد = 8-10 ثوانٍ.'},
+  {ic:'🛣️',img:'road markings white lines asphalt',fa:'fa-road',q:'ما الحد الأقصى للسرعة على معظم الطرق السريعة؟',o:['80 كم/ساعة','100-120 كم/ساعة','150 كم/ساعة','لا يوجد حد'],c:1,x:'معظم الطرق السريعة 100-120 كم/ساعة حسب اللافتات المحددة.'},
+
+  // ── التجاوز ──
+  {ic:'🚗',img:'car road driving basic',fa:'fa-car',q:'ما شروط التجاوز المسموح به؟',o:['أي وقت تريدين','خط متقطع + رؤية واضحة + لا مركبات مقابلة','الطريق خالٍ فقط','في غياب الشرطة'],c:1,x:'التجاوز يتطلب: خط متقطع، رؤية واضحة على الأقل 400م، وأمان كامل.'},
+  {ic:'❌',img:'car overtaking road passing',fa:'fa-xmark',q:'أين يُمنع التجاوز؟',o:['في المدن فقط','المنحنيات + قمم التلال + التقاطعات + الخط المستمر','في الليل فقط','لا قيود'],c:1,x:'ممنوع التجاوز في المنحنيات وقمم التلال والتقاطعات وعند الخط المستمر.'},
+  {ic:'↗️',img:'car overtaking passing lane road',fa:'fa-arrow-up-right',q:'من أي جانب يتم التجاوز في معظم الدول؟',o:['اليمين','اليسار','أي جانب','الأوسط'],c:1,x:'التجاوز يكون من اليسار في معظم دول العالم.'},
+
+  // ── الأضواء ──
+  {ic:'🔦',img:'car road driving safe',fa:'fa-flashlight',q:'متى تستخدمين الأضواء البعيدة (الطولية)؟',o:['دائماً في الليل','في الطرق المظلمة الخالية بعيداً عن المركبات','في الضباب','في المدن ليلاً'],c:1,x:'الأضواء البعيدة للطرق المظلمة الخالية فقط. خفّضها عند رؤية مركبات.'},
+  {ic:'🌫️',img:'fog road visibility driving',fa:'fa-smog',q:'ما الضوء المناسب في الضباب الكثيف؟',o:['أضواء بعيدة','مصابيح الضباب مع الأضواء القريبة','إطفاء الأضواء','وميض الأضواء'],c:1,x:'مصابيح الضباب + الأضواء القريبة. لا أضواء بعيدة — تعكس وتقلل الرؤية.'},
+  {ic:'🚨',img:'car road driving safe',fa:'fa-siren-on',q:'متى تستخدمين أضواء الطوارئ (الفلاشر)؟',o:['في المطر دائماً','عند التوقف الاضطراري أو وجود خطر مفاجئ فقط','في كل انتظار','عند الانعطاف'],c:1,x:'الفلاشر للتوقف الاضطراري والخطر فقط. لا تستخدميه في المطر — يُضلل الآخرين.'},
+  {ic:'🔄',img:'roundabout intersection traffic circle',fa:'fa-rotate',q:'متى تشغّلين إشارة الانعطاف؟',o:['لحظة الانعطاف','قبل 30م على الأقل من المناورة','بعد بدء المناورة','لا تحتاجين إذا لم يكن هناك سيارات'],c:1,x:'الإشارة 30م مسبقاً إلزامية — تعطي الآخرين وقتاً للتكيف.'},
+
+  // ── الطوارئ ──
+  {ic:'💥',img:'car accident road emergency',fa:'fa-burst',q:'انفجر إطار سيارتك فجأة — ما الإجراء الصحيح؟',o:['تكبحين بقوة فوراً','تُمسكين المقود بقوة وتفلتين الدواسة تدريجياً وتتوقفين ببطء يميناً','تنعطفين بسرعة','ترفعين يديك'],c:1,x:'الكبح المفاجئ عند انفجار الإطار يسبب الانقلاب. التباطؤ التدريجي هو الحل.'},
+  {ic:'🔥',img:'car road driving safe',fa:'fa-fire',q:'بدأ دخان يخرج من محرك سيارتك — ماذا تفعلين؟',o:['تسرعين للوصول','تتوقفين على الكتف وتطفئين المحرك وتبتعدين','تفتحين غطاء المحرك فوراً','تواصلين القيادة للمنزل'],c:1,x:'الدخان من المحرك = احتمال حريق. أوقف، أطفئ المحرك، ابتعد 50م.'},
+  {ic:'💧',img:'aquaplaning rain car skid wet road',fa:'fa-droplet',q:'فشلت مكابح سيارتك — ما الخطوة الأولى؟',o:['القفز من السيارة','الغيار لترس أدنى واستخدام مكبح اليد بلطف','الضرب بحائط','إطفاء المحرك فوراً'],c:1,x:'تغيير الترس لأدنى يُبطئ السيارة. مكبح اليد بلطف يساعد في التوقف الآمن.'},
+  {ic:'😴',img:'car road driving safe',fa:'fa-moon',q:'شعرت بنعاس شديد أثناء القيادة — ما الحل الوحيد الفعّال؟',o:['تشربين قهوة','تفتحين النافذة','تتوقفين في مكان آمن وتنامين 20 دقيقة','تُكثّفين تركيزك'],c:2,x:'النعاس = توقف إلزامي. القهوة تمنح 30 دقيقة فقط وليست حلاً حقيقياً.'},
+
+  // ── حزام الأمان والسلامة ──
+  {ic:'🦺',img:'seatbelt car safety buckle',fa:'fa-vest',q:'متى يجب ارتداء حزام الأمان؟',o:['في الرحلات الطويلة فقط','في الطريق السريع','دائماً في كل رحلة بغض النظر عن المسافة','عند وجود الشرطة'],c:2,x:'الحزام إلزامي في كل وقت، حتى في الطرق الداخلية القصيرة.'},
+  {ic:'👶',img:'car road driving safe',fa:'fa-baby',q:'أين يجب تثبيت مقعد الرضيع (أقل من 13 كجم)؟',o:['المقعد الأمامي مواجهاً للأمام','المقعد الخلفي مواجهاً للخلف','أي مقعد','المقعد الأمامي مواجهاً للخلف'],c:1,x:'الرضع يجب أن يكونوا في المقعد الخلفي مواجهين للخلف — دائماً.'},
+  {ic:'⚠️',img:'warning sign yellow triangle road',fa:'fa-triangle-exclamation',q:'لماذا لا يجب وضع مقعد الطفل في المقعد الأمامي؟',o:['لأنه لا يرى','لأن الوسادة الهوائية الأمامية قاتلة للأطفال','لأنه يشتت القائد','لأن القانون يمنع فقط'],c:1,x:'الوسادة الهوائية تنفخ بقوة هائلة خلال ثانية — تقتل الأطفال الصغار.'},
+
+  // ── المشاة والدراجات ──
+  {ic:'🚶',img:'pedestrian crosswalk safety walking',fa:'fa-person-walking',q:'مشاة يعبرون في ممر غير رسمي (بلا خطوط) — ما واجبك؟',o:['الاستمرار بحق الطريق','التنبيه بالبوق','إبطاء السرعة وإعطائهم الأولوية','تجاهلهم قانونياً'],c:2,x:'حتى خارج الممرات الرسمية، تجب مراعاة سلامة المشاة.'},
+  {ic:'🚲',img:'speed car road distance',fa:'fa-bicycle',q:'ما المسافة الجانبية الدنيا عند تجاوز دراجة هوائية؟',o:['30 سم','نصف متر','متر واحد كامل','حسب السرعة'],c:2,x:'متر كامل على الأقل للتجاوز الآمن للدراجات الهوائية.'},
+  {ic:'🏍️',img:'car mirror blind spot driver',fa:'fa-motorcycle',q:'لماذا الدراجات النارية أخطر في منطقتك العمياء؟',o:['لأنها سريعة جداً','لأنها صغيرة وقد لا تظهر في المرآة','لأن سائقيها متهورون','لأنها ضوضاء'],c:1,x:'حجمها الصغير يجعلها تختبئ في المناطق العمياء — تحقق بالنظر المباشر دائماً.'},
+
+  // ── الركن والوقوف ──
+  {ic:'🅿️',img:'parking car street city',fa:'fa-square-parking',q:'ما المسافة المثالية من الرصيف عند الوقوف الجانبي؟',o:['أي مسافة مريحة','30 سم أو أقل','متر كامل','حسب حجم السيارة'],c:1,x:'30 سم أو أقل. أبعد من ذلك = مخالفة وإزعاج للآخرين.'},
+  {ic:'🚫',img:'parking car street',fa:'fa-ban',q:'أين يُمنع الوقوف دائماً؟',o:['الطرق الجانبية','أمام الهيدرانت + التقاطعات + الخطوط الحمراء + مخارج الطوارئ','في الليل','خارج المدن'],c:1,x:'هذه المواضع ممنوع فيها الوقوف في أي وقت لأسباب أمنية حيوية.'},
+
+  // ── الطريق السريع ──
+  {ic:'⬆️',img:'car road driving safe',fa:'fa-arrow-up',q:'كيف تدخلين الطريق السريع بأمان؟',o:['تتوقفين وتنتظرين فرجة','تستخدمين ممر التسارع لمطابقة سرعة الحركة','تدخلين ببطء شديد','تدخلين من أي مسار'],c:1,x:'ممر التسارع موجود لمطابقة سرعة الطريق. لا تتوقفي — هذا يسبب حوادث.'},
+  {ic:'🚗',img:'car road driving basic',fa:'fa-car',q:'ما القاعدة الأساسية للمسارات على الطريق السريع؟',o:['سِر في أي مسار','الأيمن للقيادة، الأيسر للتجاوز فقط','الأيسر دائماً أفضل','الأوسط للقيادة العادية'],c:1,x:'المسار الأيمن للسير العادي. الأيسر للتجاوز فقط — لا قيادة بطيئة فيه.'},
+  {ic:'🆘',img:'car breakdown tow truck road',fa:'fa-circle-exclamation',q:'تعطلت سيارتك على الطريق السريع — أين تقفين وماذا تفعلين؟',o:['في المسار الأيمن','على الكتف بالكامل + فلاشر + مثلث تحذير + الخروج من الجانب الآمن','في المسار الأوسط','في أي مكان ممكن'],c:1,x:'الكتف الجانبي + فلاشر + مثلث 30م خلف السيارة + اخرجي من الجانب بعيداً عن الحركة.'},
+
+  // ── الوثائق ──
+  {ic:'📄',img:'driving license document registration',fa:'fa-file-lines',q:'ما الوثائق الإلزامية في السيارة دائماً؟',o:['رخصة القيادة فقط','رخصة + استمارة التسجيل + وثيقة التأمين','هوية + رخصة','لا يوجد إلزام'],c:1,x:'الثلاث الإلزامية: رخصة القيادة، وثيقة التسجيل، شهادة التأمين.'},
+  {ic:'💥',img:'car accident road emergency',fa:'fa-burst',q:'ما أول شيء تفعلينه بعد حادث بسيط؟',o:['الاتصال بالتأمين','تأمين الموقع بالفلاشر والمثلث ثم التصوير قبل التحريك','مغادرة الموقع','تحريك السيارات فوراً'],c:1,x:'أمّني أولاً ثم وثّق. التصوير قبل تحريك أي سيارة ضروري لأغراض التأمين.'},
+  {ic:'⚖️',img:'car accident emergency road',fa:'fa-scale-balanced',q:'هل يجوز مغادرة موقع الحادث الذي فيه مصابون؟',o:['نعم إذا لم تكن المسؤولة','لا — جريمة في القانون','نعم إذا استدعيت الإسعاف','حسب خطورة الإصابة'],c:1,x:'مغادرة موقع الحادث الذي فيه مصابون جريمة قانونية في كل دول العالم.'},
+
+  // ── الصيانة ──
+  {ic:'🛞',img:'car road driving safe',fa:'fa-circle-dot',q:'متى تفحصين ضغط الإطارات بشكل صحيح؟',o:['مباشرة بعد القيادة','بعد 3 ساعات توقف — الإطار بارد','في أي وقت','قبل الرحلات الطويلة فقط'],c:1,x:'ضغط الإطار الصحيح يُقاس بارداً — حرارة القيادة ترفع الضغط وتعطي قراءة مغلوطة.'},
+  {ic:'💡',img:'car headlights night road',fa:'fa-lightbulb',q:'ما تأثير مصباح السيارة المحروق على القانون؟',o:['لا تأثير','مخالفة مرورية قد تُوقفك الشرطة','تحذير بسيط','غرامة بسيطة'],c:1,x:'المصابيح إلزامية. مصباح محروق = مخالفة + خطر على السلامة.'},
+  {ic:'🔋',img:'car battery engine start',fa:'fa-battery-half',q:'ما علامات اقتراب عمر البطارية من النهاية؟',o:['ارتفاع استهلاك الوقود','بطء في الإشعال وأضواء خافتة وطقطقة','ضوضاء من المحرك','ارتفاع حرارة السيارة'],c:1,x:'بطء الإشعال + أضواء خافتة = بطارية ضعيفة. عمرها 3-5 سنوات عادةً.'},
+
+  // ── أجهزة السلامة ──
+  {ic:'🔒',img:'car road driving safe',fa:'fa-lock',q:'ماذا تفعلين عند شعور باهتزاز دواسة الفرامل أثناء كبح شديد؟',o:['تُفلتين الفرامل فوراً','تستمرين بضغط ثابت — هذا نظام ABS يعمل','تستخدمين مكبح اليد','تُقطّعين الفرامل'],c:1,x:'الاهتزاز = ABS يعمل بشكل صحيح. استمر بضغط ثابت ولا تُفلتي الفرامل.'},
+  {ic:'🫧',img:'seatbelt car safety',fa:'fa-shield-halved',q:'هل الوسادة الهوائية تضمن الحماية بدون حزام الأمان؟',o:['نعم دائماً','نعم للبالغين','لا — قد تسبب إصابات خطيرة بدون الحزام','نعم بسرعة اصطدام أقل من 60 كم/ساعة'],c:2,x:'الوسادة الهوائية مُصممة للعمل مع الحزام. بدون الحزام قد تُصيب بدل أن تحمي.'},
+
+  // ── سلوكيات مختلفة ──
+  {ic:'📱',img:'car road driving safe',fa:'fa-mobile-screen',q:'ما عقوبة استخدام الجوال باليد أثناء القيادة في معظم الدول؟',o:['لا شيء','تحذير شفهي فقط','غرامة مالية وخصم نقاط من الرخصة','غرامة بسيطة جداً'],c:2,x:'الجوال باليد أثناء القيادة مخالفة جسيمة تعادل القيادة بدون تركيز.'},
+  {ic:'🌙',img:'night driving road headlights dark',fa:'fa-moon',q:'بكم تنخفض قدرة الرؤية في الليل مقارنة بالنهار؟',o:['25%','50%','75%','لا فرق مع الأضواء'],c:2,x:'الرؤية ليلاً أقل بـ75%. لذلك يجب تقليل السرعة وزيادة المسافة الأمنية.'},
+  {ic:'❄️',img:'snow ice road winter driving',fa:'fa-snowflake',q:'ما المسافة الأمنية الموصى بها على الجليد؟',o:['ثانيتان','4 ثوانٍ','8-10 أضعاف المسافة العادية','100م ثابتة'],c:2,x:'الجليد يُطيل مسافة الإيقاف 8-10 أضعاف. السرعة يجب أن لا تتجاوز 30 كم/ساعة.'},
+  {ic:'🤲',img:'car road driving safe',fa:'fa-hands',q:'ما الوضع الصحيح لليدين على المقود للتحكم الأمثل وحماية الوسادة الهوائية؟',o:['12 و6','10 و2 أو 9 و3','8 و4','أي وضع مريح'],c:1,x:'10 و2 أو 9 و3 يعطيان أفضل تحكم ويبقيان اليدين بعيدتين عن منطقة الوسادة الهوائية.'},
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let STATE = { user:null, data:null, prevView:'home', examQ:[], examIdx:0, examAns:{}, examTimer:null, examStart:0, chatHistory:[], quizState:{} };
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+window.showView = function(id) {
+  // ① أخفِ كل الـ views بـ inline style
+  document.querySelectorAll('.view').forEach(v => {
+    v.classList.remove('active');
+    v.style.display = 'none';
+  });
+
+  const el = document.getElementById(id);
+  el.classList.add('active');
+
+  // هل شريط التنقل السفلي مرئي؟
+  const navOn = document.getElementById('bnav').classList.contains('on');
+  const navH  = navOn ? 64 : 0;  // --nav = 64px
+
+  if (id === 'ai') {
+    // ② شاشة AI: flex column ثابت
+    el.style.display        = 'flex';
+    el.style.flexDirection  = 'column';
+    el.style.position       = 'fixed';
+    el.style.top            = '0';
+    el.style.left           = '0';
+    el.style.right          = '0';
+    el.style.bottom         = navH + 'px';
+    el.style.height         = 'calc(100vh - ' + navH + 'px)';
+    el.style.overflow       = 'hidden';
+    el.style.background     = '#F4F0FB';
+    el.style.zIndex         = '10';
+    const msgs = document.getElementById('chat-msgs');
+    if (msgs) {
+      msgs.style.flex          = '1';
+      msgs.style.overflowY     = 'auto';
+      msgs.style.minHeight     = '0';
+      msgs.style.padding       = '14px';
+      msgs.style.display       = 'flex';
+      msgs.style.flexDirection = 'column';
+      msgs.style.gap           = '14px';
+    }
+  } else {
+    // ③ كل الشاشات الأخرى: block scrollable
+    el.style.display       = 'block';
+    el.style.position      = 'fixed';
+    el.style.top           = '0';
+    el.style.left          = '0';
+    el.style.right         = '0';
+    el.style.overflowY     = 'auto';
+    el.style.overflowX     = 'hidden';
+    el.style.background    = '#F4F0FB';
+    el.style.zIndex        = '10';
+    // ④ إذا كان الـ nav مرئياً: كل الشاشات تتوقف فوقه
+    //    (يشمل exam و lesson-detail وليس فقط has-nav)
+    el.style.bottom        = navH + 'px';
+    el.style.paddingBottom = navOn ? '24px' : '0';
+  }
+};
+window.switchTab = function(tab) {
+  showView(tab);
+  document.querySelectorAll('.nb').forEach(b => { b.classList.toggle('active', b.dataset.t === tab); });
+  if(tab==='home')         renderHome();
+  if(tab==='lessons')      renderLessons();
+  if(tab==='progress')     renderProgress();
+  if(tab==='profile')      renderProfile();
+  if(tab==='ai')           updateTokenUI();
+  if(tab==='subscription') {
+    const ctr = document.getElementById('sub-ad-counter');
+    if(ctr) { const s = getAdState(); ctr.textContent = `${s.watched} / ${AD_MAX_DAILY}`; }
+  }
+};
+window.goBack = function() { switchTab(STATE.prevView || 'lessons'); };
+
+function toast(msg, type='err') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = type; t.style.animation='none'; t.style.display='block';
+  t.style.animation='none'; setTimeout(()=>t.style.animation='sup .3s ease',10);
+  setTimeout(()=>t.style.display='none', 3200);
+}
+function setBtn(id, loading) {
+  const b = document.getElementById(id);
+  if(!b) return;
+  b.disabled = loading;
+  b.innerHTML = loading ? '<div class="ld"></div>' : b.dataset.label || b.innerHTML;
+  if(!loading && !b.dataset.label) {}
+}
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+window.doLogin = async function() {
+  const e=document.getElementById('le').value.trim();
+  const p=document.getElementById('lp').value;
+  if(!e||!p){toast('أدخلي البريد وكلمة المرور');return;}
+  const btn=document.getElementById('lb');
+  btn.innerHTML='<div class="ld"></div>'; btn.disabled=true;
+  try {
+    await signInWithEmailAndPassword(auth,e,p);
+    // onAuthStateChanged سيتولى التنقل للرئيسية
+  } catch(err) {
+    let msg='خطأ في البريد أو كلمة المرور';
+    if(err.code==='auth/network-request-failed') msg='تحقق من الاتصال بالإنترنت 📶';
+    if(err.code==='auth/too-many-requests')      msg='محاولات كثيرة — انتظر دقيقة';
+    if(err.code==='auth/invalid-email')          msg='البريد الإلكتروني غير صحيح';
+    if(err.code==='auth/user-not-found')         msg='لا يوجد حساب بهذا البريد';
+    if(err.code==='auth/wrong-password')         msg='كلمة المرور غير صحيحة';
+    toast(msg);
+    btn.innerHTML='تسجيل الدخول'; btn.disabled=false;
+  }
+};
+window.doRegister = async function() {
+  const n=document.getElementById('rn').value.trim();
+  const e=document.getElementById('re').value.trim();
+  const p=document.getElementById('rp').value;
+  if(!n||!e||!p){toast('أكملي جميع الحقول');return;}
+  if(p.length<6){toast('كلمة المرور 6 أحرف على الأقل');return;}
+  const btn=document.getElementById('rb');
+  btn.innerHTML='<div class="ld"></div>'; btn.disabled=true;
+  try {
+    const cred = await createUserWithEmailAndPassword(auth,e,p);
+    await updateProfile(cred.user,{displayName:n});
+    // حفظ cache فوراً — onAuthStateChanged سيحفظ في Firestore
+    const newUser = { uid:cred.user.uid, name:n, email:e, plan:'free', progress:{}, examHistory:[], createdAt:new Date().toISOString() };
+    saveCache(newUser);
+    // Firestore في الخلفية بدون انتظار
+    setDoc(doc(db,'users',cred.user.uid), newUser).catch(()=>{});
+  } catch(err) {
+    let msg='حدث خطأ، حاول مجدداً';
+    if(err.code==='auth/email-already-in-use') msg='هذا البريد مسجّل مسبقاً';
+    if(err.code==='auth/network-request-failed') msg='تحقق من الاتصال بالإنترنت 📶';
+    if(err.code==='auth/weak-password') msg='كلمة المرور ضعيفة جداً';
+    if(err.code==='auth/invalid-email') msg='البريد الإلكتروني غير صحيح';
+    toast(msg);
+    btn.innerHTML='إنشاء الحساب 🎉'; btn.disabled=false;
+  }
+};
+window.doLogout = async function() {
+  await signOut(auth);
+  document.getElementById('bnav').classList.remove('on');
+  showView('onboarding');
+};
+
+onAuthStateChanged(auth, async user => {
+  if(user) {
+    STATE.user = user;
+
+    // ① بيانات فورية من cache أو fallback بسيط
+    const cached = loadCache();
+    if(cached && cached.uid === user.uid) {
+      STATE.data = cached;
+    } else {
+      STATE.data = {
+        uid: user.uid,
+        name: user.displayName || 'مستخدمة',
+        email: user.email,
+        plan: 'free', progress: {}, examHistory: []
+      };
+    }
+
+    // ② عرض الرئيسية فوراً — بدون انتظار Firestore
+    document.getElementById('bnav').classList.add('on');
+    renderHome(); renderLessons(); renderProgress(); renderProfile();
+    showView('home');
+    document.querySelector('[data-t="home"]').classList.add('active');
+
+    // ③ Firestore في الخلفية — لا يُعطّل الواجهة
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if(snap.exists()) {
+        STATE.data = { ...snap.data(), uid: user.uid };
+      } else {
+        // مستخدمة جديدة — أنشئي السجل
+        const newDoc = { uid:user.uid, name:user.displayName||'مستخدمة', email:user.email, plan:'free', progress:{}, examHistory:[], createdAt:new Date().toISOString() };
+        await setDoc(doc(db,'users',user.uid), newDoc);
+        STATE.data = newDoc;
+      }
+      saveCache(STATE.data);
+      // تحديث الواجهة بالبيانات الجديدة بهدوء
+      renderHome(); renderProgress(); renderProfile();
+    } catch(e) {
+      // اشتغلي بالبيانات المخزنة — لا تُظهري خطأ للمستخدمة
+      saveCache(STATE.data);
+    }
+
+  } else {
+    clearCache();
+    STATE.user = null; STATE.data = null;
+    setTimeout(() => showView('onboarding'), 1500);
+  }
+});
+
+// ═══════════════════════════════════════
+// USER DATA
+// ═══════════════════════════════════════
+async function markLesson(lessonId) {
+  if(!STATE.data) return;
+  STATE.data.progress[lessonId] = true;
+  saveCache({...STATE.data, uid:STATE.user?.uid});
+  try { await updateDoc(doc(db,'users',STATE.user.uid),{[`progress.${lessonId}`]:true}); } catch(e){}
+  // ── إعلان بيني عند إكمال الدرس ──
+  setTimeout(() => showInterstitial(null), 900);
+}
+async function saveExamResult(score, correct, total, mins, secs) {
+  const rec = { score, correct, total, time:`${mins}:${String(secs).padStart(2,'0')}`, date:new Date().toLocaleDateString('ar') };
+  if(!STATE.data.examHistory) STATE.data.examHistory = [];
+  STATE.data.examHistory.unshift(rec);
+  if(STATE.data.examHistory.length > 50) STATE.data.examHistory = STATE.data.examHistory.slice(0,50);
+  saveCache({...STATE.data, uid:STATE.user?.uid});
+  try { await updateDoc(doc(db,'users',STATE.user.uid),{examHistory:arrayUnion(rec)}); } catch(e){}
+}
+
+// ═══════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════
+function renderHome() {
+  if(!STATE.data) return;
+  const total = CHAPTERS.reduce((s,c)=>s+c.lessons.length,0);
+  const done = Object.keys(STATE.data.progress||{}).length;
+  const pct = Math.round(done/total*100);
+  document.getElementById('h-name').textContent = STATE.data.name || STATE.user?.displayName || 'مستخدمة';
+  document.getElementById('h-pct').textContent = pct+'%';
+  document.getElementById('h-bar').style.width = pct+'%';
+  document.getElementById('h-ld').textContent = done+' دروس مكتملة';
+  document.getElementById('h-ed').textContent = (STATE.data.examHistory?.length||0)+' اختبارات';
+  // Recent lessons
+  const container = document.getElementById('h-recent');
+  const chIcons2=['fa-traffic-light','fa-book-open','fa-road','fa-shield-halved','fa-rotate'];
+  let html=''; let count=0;
+  for(const [chIdx2,ch] of CHAPTERS.entries()) {
+    for(const l of ch.lessons) {
+      if(count>=3) break;
+      const isDone=STATE.data.progress?.[l.id];
+      const locked=!l.free&&!isLessonUnlocked(l.id);
+      const bdStyle=isDone?'background:rgba(34,197,94,.12);color:#16A34A;':locked?'background:#FEF3C7;color:#D97706;':'background:rgba(107,47,160,.1);color:#6B2FA0;';
+      const bdTxt=isDone?'✓ مكتمل':locked?'📺 إعلان':'جديد';
+      const onclick=locked?`watchAdForLesson('${ch.id}','${l.id}')`:`openLesson('${ch.id}','${l.id}')`;
+      html+=`<div onclick="${onclick}" style="background:#fff;border-radius:14px;padding:13px;display:flex;align-items:center;gap:11px;margin-bottom:9px;border:1.5px solid #EDE6F8;cursor:pointer;box-shadow:0 2px 8px rgba(107,47,160,.07);">
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(107,47,160,.09);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid ${chIcons2[chIdx2]||'fa-car'}" style="color:#6B2FA0;font-size:17px;"></i>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:#16052E;">${l.title}</div>
+          <div style="font-size:11px;color:#8B7AAA;margin-top:2px;">${ch.title} · ${l.dur}</div>
+        </div>
+        <span style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;white-space:nowrap;${bdStyle}">${bdTxt}</span>
+      </div>`;
+      count++;
+    }
+    if(count>=3) break;
+  }
+  container.innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+// LESSONS
+// ═══════════════════════════════════════
+function renderLessons() {
+  const container = document.getElementById('ch-list');
+  let html = '';
+  CHAPTERS.forEach((ch,i) => {
+    const doneCt = ch.lessons.filter(l=>STATE.data?.progress?.[l.id]).length;
+    html += `<div class="cc" id="cc-${ch.id}">
+      <div class="ch" onclick="toggleCh('${ch.id}')">
+        <div class="chn">${i+1}</div>
+        <div class="chi"><div class="ch-t">${ch.icon} ${ch.title}</div><div class="ch-s">${doneCt}/${ch.lessons.length} مكتمل</div></div>
+        <div class="ch-a">›</div>
+      </div>
+      <div class="cl">`;
+    ch.lessons.forEach(l => {
+      const isDone = STATE.data?.progress?.[l.id];
+      const locked = !l.free && !isLessonUnlocked(l.id);
+      html += `<div class="lr" onclick="${locked ? `watchAdForLesson('${ch.id}','${l.id}')` : `openLesson('${ch.id}','${l.id}')`}">
+        <i class="fa-solid ${locked ? 'fa-tv' : isDone ? 'fa-circle-check' : 'fa-circle-play'} lr-ic"
+           style="color:${locked ? '#F59E0B' : isDone ? 'var(--ok)' : 'var(--p)'}"></i>
+        <div class="lr-i">
+          <div class="lr-t">${l.title}</div>
+          <div class="lr-d">${l.dur}${locked ? ' · <span style="color:#F59E0B;font-weight:700;">📺 شاهد إعلاناً للفتح</span>' : ''}</div>
+        </div>
+        ${locked
+          ? `<div style="background:#FEF3C7;border-radius:10px;padding:4px 10px;font-size:11px;font-weight:700;color:#D97706;font-family:'Cairo',sans-serif;flex-shrink:0;">إعلان</div>`
+          : `<i class="fa-solid fa-chevron-left" style="font-size:11px;color:var(--t3)"></i>`}
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+  // Open first chapter by default
+  document.getElementById('cc-ch1')?.classList.add('op');
+}
+window.toggleCh = function(id) {
+  document.getElementById('cc-'+id)?.classList.toggle('op');
+};
+window.openLesson = function(chId, lessonId) {
+  const ch = CHAPTERS.find(c=>c.id===chId);
+  const l = ch?.lessons.find(ls=>ls.id===lessonId);
+  if(!l) return;
+  STATE.prevView = 'lessons';
+  document.getElementById('ld-t').textContent = l.title;
+  document.getElementById('ld-s').textContent = ch.title+' · '+l.dur;
+  document.getElementById('ld-body').innerHTML = l.content;
+  // Quiz
+  STATE.quizState = { lessonId:l.id, answers:{}, submitted:false };
+  const qc = document.getElementById('ld-quiz');
+  const qq = document.getElementById('quiz-qs');
+  if(l.quiz?.length) {
+    let qhtml='';
+    l.quiz.forEach((q,qi)=>{
+      qhtml+=`<div class="qq"><div class="qq-t">${qi+1}. ${q.q}</div>
+        <div style="display:flex;flex-direction:column;gap:9px;">`;
+      q.opts.forEach((o,oi)=>{
+        qhtml+=`<button onclick="selectOpt(${qi},${oi})" id="opt-${qi}-${oi}"
+          style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 16px;border:2px solid #EDE6F8;border-radius:12px;background:#fff;font-family:'Cairo',sans-serif;font-size:13px;color:#16052E;cursor:pointer;text-align:right;box-sizing:border-box;transition:all .18s;">
+          <span style="flex:1;text-align:right;">${o}</span>
+          <i class="fa-regular fa-circle" id="dot-${qi}-${oi}" style="font-size:17px;color:#B8A8D0;flex-shrink:0;margin-right:8px;"></i>
+        </button>`;
+      });
+      qhtml+=`</div></div>`;
+    });
+    qq.innerHTML=qhtml;
+    qc.style.display='block';
+    document.getElementById('quiz-btn').disabled=false;
+    document.getElementById('quiz-btn').textContent='إرسال الإجابات ✓';
+  } else {
+    qc.style.display='none';
+  }
+  showView('lesson-detail');
+};
+window.selectOpt = function(qi, oi) {
+  if(STATE.quizState.submitted) return;
+  const q = findCurrentLesson()?.quiz?.[qi];
+  if(!q) return;
+  STATE.quizState.answers[qi] = oi;
+  q.opts.forEach((_,i)=>{
+    const b=document.getElementById(`opt-${qi}-${i}`);
+    const icon=document.getElementById(`dot-${qi}-${i}`);
+    if(i===oi){
+      b.style.borderColor='#6B2FA0';
+      b.style.background='rgba(107,47,160,.05)';
+      icon.className='fa-solid fa-circle-dot';
+      icon.style.color='#6B2FA0';
+    } else {
+      b.style.borderColor='#EDE6F8';
+      b.style.background='#fff';
+      icon.className='fa-regular fa-circle';
+      icon.style.color='#B8A8D0';
+    }
+  });
+};
+function findCurrentLesson() {
+  for(const ch of CHAPTERS) for(const l of ch.lessons) if(l.id===STATE.quizState.lessonId) return l;
+  return null;
+}
+window.submitQuiz = function() {
+  const l=findCurrentLesson(); if(!l||STATE.quizState.submitted) return;
+  STATE.quizState.submitted=true;
+  document.getElementById('quiz-btn').disabled=true;
+  let correct=0;
+  l.quiz.forEach((q,qi)=>{
+    const chosen=STATE.quizState.answers[qi];
+    q.opts.forEach((_,oi)=>{
+      const b=document.getElementById(`opt-${qi}-${oi}`);
+      if(!b) return;
+      const icon=document.getElementById(`dot-${qi}-${oi}`);
+      if(oi===q.cor){
+        b.style.borderColor='#22C55E';
+        b.style.background='rgba(34,197,94,.06)';
+        b.style.color='#16A34A';
+        if(icon){icon.className='fa-solid fa-circle-check';icon.style.color='#22C55E';}
+      } else if(oi===chosen && chosen!==q.cor){
+        b.style.borderColor='#EF4444';
+        b.style.background='rgba(239,68,68,.06)';
+        b.style.color='#DC2626';
+        if(icon){icon.className='fa-solid fa-circle-xmark';icon.style.color='#EF4444';}
+      } else {
+        b.style.borderColor='#EDE6F8';
+        b.style.background='#fff';
+        b.style.color='#16052E';
+        if(icon){icon.className='fa-regular fa-circle';icon.style.color='#B8A8D0';}
+      }
+    });
+    if(chosen===q.cor) correct++;
+  });
+  if(correct===l.quiz.length) {
+    markLesson(l.id);
+    toast('أحسنتِ! إجابات صحيحة كلها 🎉','ok');
+  } else {
+    toast(`${correct} من ${l.quiz.length} صحيح — أعيدي المحاولة`,'err');
+  }
+};
+
+// ═══════════════════════════════════════
+// EXAM
+// ═══════════════════════════════════════
+window.startExam = function() {
+  clearInterval(STATE.examTimer);
+  document.querySelectorAll('.nb').forEach(b=>b.classList.toggle('active',b.dataset.t==='exam'));
+  // مع نظام الإعلانات: الاختبار الكامل للجميع (30 سؤال، 45 دقيقة)
+  STATE.examQ = [...QUESTIONS].sort(()=>Math.random()-.5).slice(0,30);
+  STATE.examIdx = 0; STATE.examAns = {};
+  STATE.examStart = Date.now();
+  let secs = 2700; // 45 دقيقة
+  const updateTimer=()=>{
+    const m=Math.floor(secs/60), s=secs%60;
+    document.getElementById('e-timer').textContent=`${m}:${String(s).padStart(2,'0')}`;
+    if(secs<=0){clearInterval(STATE.examTimer);endExam();} secs--;
+  };
+  updateTimer();
+  STATE.examTimer=setInterval(updateTimer,1000);
+  renderExamQ();
+  showView('exam');
+};
+function renderExamQ() {
+  const total=STATE.examQ.length, idx=STATE.examIdx;
+  if(idx>=total){endExam();return;}
+  const q=STATE.examQ[idx];
+
+  // ── صورة السؤال: unsplash حقيقية مع fallback emoji ──
+  const imgBox = document.getElementById('e-img');
+  imgBox.style.position='relative';
+  imgBox.style.overflow='hidden';
+  if(q.img){
+    const url=`https://source.unsplash.com/800x320/?${encodeURIComponent(q.img)}&sig=${idx}`;
+    imgBox.innerHTML=`
+      <img src="${url}" loading="lazy"
+        style="width:100%;height:100%;object-fit:cover;border-radius:14px;display:block;"
+        onerror="this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:56px;\\'>${q.ic}</div>'">
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(transparent,rgba(0,0,0,.45));border-radius:0 0 14px 14px;">
+        <span style="color:#fff;font-size:11px;font-family:'Cairo',sans-serif;opacity:.9;">السؤال ${idx+1} من ${total}</span>
+      </div>`;
+  } else {
+    imgBox.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:56px;">${q.ic}</div>`;
+  }
+
+  document.getElementById('e-num').textContent=`السؤال ${idx+1} من ${total}`;
+  document.getElementById('e-ql').textContent=`${idx+1} / ${total}`;
+  document.getElementById('e-pf').style.width=((idx+1)/total*100)+'%';
+  document.getElementById('e-txt').textContent=q.q;
+  document.getElementById('e-exp').style.display='none';
+  document.getElementById('e-next').innerHTML='التالي <i class="fa-solid fa-arrow-left"></i>';
+
+  const opts=document.getElementById('e-opts');
+  opts.innerHTML='<div style="display:flex;flex-direction:column;gap:9px;">' +
+    q.o.map((o,i)=>`
+      <button onclick="pickExamOpt(${i})" id="eopt-${i}"
+        style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 16px;border:2px solid #EDE6F8;border-radius:12px;background:#fff;font-family:'Cairo',sans-serif;font-size:13px;color:#16052E;cursor:pointer;text-align:right;box-sizing:border-box;">
+        <span style="flex:1;text-align:right;">${o}</span>
+        <i class="fa-regular fa-circle" id="edot-${i}" style="font-size:17px;color:#B8A8D0;flex-shrink:0;margin-right:8px;"></i>
+      </button>`).join('') +
+    '</div>';
+}
+window.pickExamOpt = function(oi) {
+  const q=STATE.examQ[STATE.examIdx];
+  STATE.examAns[STATE.examIdx]=oi;
+  q.o.forEach((_,i)=>{
+    const b=document.getElementById(`eopt-${i}`);
+    const icon=document.getElementById(`edot-${i}`);
+    if(i===q.c){
+      b.style.borderColor='#22C55E';
+      b.style.background='rgba(34,197,94,.06)';
+      b.style.color='#16A34A';
+      if(icon){icon.className='fa-solid fa-circle-check';icon.style.color='#22C55E';}
+    } else if(i===oi&&oi!==q.c){
+      b.style.borderColor='#EF4444';
+      b.style.background='rgba(239,68,68,.06)';
+      b.style.color='#DC2626';
+      if(icon){icon.className='fa-solid fa-circle-xmark';icon.style.color='#EF4444';}
+    } else {
+      b.style.borderColor='#EDE6F8';
+      b.style.background='#fff';
+      b.style.color='#16052E';
+      if(icon){icon.className='fa-regular fa-circle';icon.style.color='#B8A8D0';}
+    }
+  });
+  const expEl=document.getElementById('e-exp');
+  expEl.innerHTML='<i class="fa-solid fa-lightbulb" style="color:#F59E0B;margin-left:8px;"></i>'+q.x;
+  expEl.style.cssText='display:block;background:rgba(34,197,94,.07);border:1.5px solid rgba(34,197,94,.2);border-radius:12px;padding:11px 14px;font-size:13px;color:#15803D;margin-top:10px;line-height:1.6;';
+  document.getElementById('e-next').innerHTML='السؤال التالي &nbsp;<i class="fa-solid fa-arrow-left"></i>';
+};
+window.nextQ = function() {
+  if(STATE.examIdx<STATE.examQ.length-1){STATE.examIdx++;renderExamQ();}
+  else endExam();
+};
+window.skipQ = function() {
+  if(STATE.examIdx<STATE.examQ.length-1){STATE.examIdx++;renderExamQ();}
+  else endExam();
+};
+function endExam() {
+  clearInterval(STATE.examTimer);
+  const elapsed=Math.round((Date.now()-STATE.examStart)/1000);
+  const mins=Math.floor(elapsed/60), secs=elapsed%60;
+  const total=STATE.examQ.length;
+  const correct=Object.entries(STATE.examAns).filter(([i,a])=>STATE.examQ[i]?.c===a).length;
+  const pct=Math.round(correct/total*100);
+  const pass=pct>=70;
+  document.getElementById('r-icon').textContent=pass?'🎉':'😔';
+  document.getElementById('r-score').textContent=pct+'%';
+  document.getElementById('r-lbl').textContent=pass?'أحسنتِ! اجتزت الاختبار':'حاول مجدداً — أنت قادرة!';
+  document.getElementById('r-ok').textContent=`${correct} من ${total}`;
+  document.getElementById('r-err').textContent=`${total-correct} من ${total}`;
+  document.getElementById('r-time').textContent=`${mins}:${String(secs).padStart(2,'0')}`;
+  saveExamResult(pct,correct,total,mins,secs);
+  showView('exam-result');
+}
+
+// ═══════════════════════════════════════
+// AD SYSTEM
+// ═══════════════════════════════════════
+const AD_MAX_DAILY   = 5;
+const AD_TOKENS_EACH = 3;
+const AD_KEY         = 'alqaida_ads';
+
+function getAdState() {
+  const today = new Date().toDateString();
+  try {
+    const s = JSON.parse(localStorage.getItem(AD_KEY) || '{}');
+    if (s.date !== today) return { date: today, watched: 0, tokens: 0 };
+    return s;
+  } catch { return { date: today, watched: 0, tokens: 0 }; }
+}
+function saveAdState(s) {
+  try { localStorage.setItem(AD_KEY, JSON.stringify(s)); } catch {}
+}
+function getTokens() { return getAdState().tokens; }
+
+// ── Update AI header token display ──
+function updateTokenUI() {
+  const tk = getTokens();
+  const el = document.getElementById('ai-token-badge');
+  if (!el) return;
+  el.textContent = tk > 0 ? `${tk} 🎯` : '0';
+  el.style.background = tk > 0 ? 'rgba(134,239,172,.25)' : 'rgba(239,68,68,.2)';
+  el.style.color       = tk > 0 ? '#86EFAC' : '#FCA5A5';
+
+  // Show/hide input area vs watch-ad area
+  const inputArea  = document.getElementById('ai-input-area');
+  const watchArea  = document.getElementById('ai-watch-area');
+  const adState    = getAdState();
+  const limitHit   = adState.watched >= AD_MAX_DAILY;
+  if (inputArea && watchArea) {
+    if (tk > 0) {
+      inputArea.style.display = 'flex';
+      watchArea.style.display = 'none';
+    } else {
+      inputArea.style.display = 'none';
+      watchArea.style.display = 'flex';
+      // Show limit message if daily limit hit
+      const watchMsg = document.getElementById('watch-msg');
+      if (watchMsg) watchMsg.textContent = limitHit
+        ? 'وصلت للحد اليومي (5 إعلانات). عد غداً!'
+        : 'شاهد إعلاناً قصيراً واحصل على 3 طلبات للمساعد الذكي 🎁';
+      const watchBtn = document.getElementById('watch-btn');
+      if (watchBtn) {
+        watchBtn.disabled = limitHit;
+        watchBtn.style.opacity = limitHit ? '.5' : '1';
+        watchBtn.style.cursor  = limitHit ? 'not-allowed' : 'pointer';
+      }
+    }
+  }
+  // Update subscription page counter
+  const ctr = document.getElementById('sub-ad-counter');
+  if (ctr) ctr.textContent = `${adState.watched} / ${AD_MAX_DAILY}`;
+}
+
+// ── Ad Modal logic ──
+let _adTimer = null;
+let _adCallback = null;
+let _adType = 'rewarded'; // 'rewarded' | 'interstitial'
+
+window.closeAd = function() {
+  clearInterval(_adTimer);
+  document.getElementById('ad-modal').style.display = 'none';
+  // ── منح المكافأة حسب نوع الإعلان ──
+  if (_adType === 'rewarded-ai') {
+    const s = getAdState();
+    s.watched++;
+    s.tokens = (s.tokens || 0) + AD_TOKENS_EACH;
+    saveAdState(s);
+    updateTokenUI();
+    toast(`🎁 حصلت على ${AD_TOKENS_EACH} طلبات للمساعد الذكي!`, 'ok');
+  } else if (_adType === 'rewarded-lesson') {
+    const s = getAdState();
+    s.watched++;
+    saveAdState(s);
+    // الدرس يُفتح عبر الـ callback
+  }
+  // interstitial: لا مكافأة، فقط callback
+  if (typeof _adCallback === 'function') _adCallback();
+  _adCallback = null;
+};
+
+function runAdModal(type, duration, onComplete) {
+  _adType = type;
+  _adCallback = onComplete;
+
+  const modal    = document.getElementById('ad-modal');
+  const prog     = document.getElementById('ad-prog');
+  const countEl  = document.getElementById('ad-count');
+  const btn      = document.getElementById('ad-btn');
+  const btnTxt   = document.getElementById('ad-btn-txt');
+  const title    = document.getElementById('ad-title');
+  const sub      = document.getElementById('ad-sub');
+
+  // Configure for type
+  if (type === 'rewarded-ai') {
+    title.textContent = 'شاهد الإعلان للحصول على مكافأة';
+    sub.textContent   = `ستحصل على ${AD_TOKENS_EACH} طلبات للمساعد الذكي`;
+  } else if (type === 'rewarded-lesson') {
+    // title/sub set externally by watchAdForLesson
+  } else {
+    title.textContent = 'إعلان قصير — شكراً لاستخدامك التطبيق!';
+    sub.textContent   = 'يغلق تلقائياً بعد انتهاء العد';
+  }
+
+  btn.disabled           = true;
+  btn.style.cursor       = 'not-allowed';
+  btn.style.background   = '#EDE6F8';
+  btn.style.color        = '#8B7AAA';
+  prog.style.transition  = 'none';
+  prog.style.width       = '0%';
+  modal.style.display    = 'flex';
+
+  let rem = duration;
+  if (countEl) countEl.textContent = rem;
+
+  // Force reflow then animate
+  setTimeout(() => {
+    prog.style.transition = `width ${duration}s linear`;
+    prog.style.width      = '100%';
+  }, 50);
+
+  _adTimer = setInterval(() => {
+    rem--;
+    if (countEl) countEl.textContent = rem;
+    if (rem <= 0) {
+      clearInterval(_adTimer);
+      btn.disabled          = false;
+      btn.style.cursor      = 'pointer';
+      btn.style.background  = 'linear-gradient(135deg,#6B2FA0,#3D1A6E)';
+      btn.style.color       = '#fff';
+      if (btnTxt) btnTxt.innerHTML = type !== 'interstitial'
+        ? '<i class="fa-solid fa-gift"></i> احصل على مكافأتك'
+        : '<i class="fa-solid fa-xmark"></i> إغلاق';
+      // Auto-close interstitial
+      if (type === 'interstitial') setTimeout(window.closeAd, 800);
+    }
+  }, 1000);
+}
+
+// ── Public API ──
+window.watchRewardedAd = function() {
+  const s = getAdState();
+  if (s.watched >= AD_MAX_DAILY) {
+    toast('وصلت للحد اليومي (5 إعلانات). عد غداً! 🌙', 'err');
+    return;
+  }
+  runAdModal('rewarded-ai', 5, null);
+};
+
+// ── إدارة فتح الدروس بالإعلانات ──
+function isLessonUnlocked(id) {
+  if (!id) return false;
+  try {
+    const list = JSON.parse(localStorage.getItem('unlocked_lessons') || '[]');
+    return list.includes(id);
+  } catch { return false; }
+}
+function persistUnlock(id) {
+  try {
+    const list = JSON.parse(localStorage.getItem('unlocked_lessons') || '[]');
+    if (!list.includes(id)) { list.push(id); localStorage.setItem('unlocked_lessons', JSON.stringify(list)); }
+  } catch {}
+}
+
+window.watchAdForLesson = function(chId, lessonId) {
+  const s = getAdState();
+  if (s.watched >= AD_MAX_DAILY) {
+    toast('وصلت للحد اليومي (5 إعلانات). عد غداً! 🌙', 'err');
+    return;
+  }
+  // أضف عنوان مخصص قبل فتح المودال
+  const titleEl = document.getElementById('ad-title');
+  const subEl   = document.getElementById('ad-sub');
+  if (titleEl) titleEl.textContent = 'شاهد الإعلان لفتح هذا الدرس';
+  if (subEl)   subEl.textContent   = 'بعد انتهاء العد سيُفتح الدرس تلقائياً';
+  runAdModal('rewarded-lesson', 5, () => {
+    persistUnlock(lessonId);   // فتح دائم
+    renderLessons();           // تحديث قائمة الدروس
+    openLesson(chId, lessonId); // فتح الدرس فوراً
+  });
+};
+
+function showInterstitial(onDone) {
+  runAdModal('interstitial', 3, onDone);
+}
+
+// AI CHAT
+window.sendChat = async function() {
+  // ── Token check ──
+  const adState = getAdState();
+  if (adState.tokens <= 0) {
+    updateTokenUI();
+    return;
+  }
+  const ci  = document.getElementById('ci');
+  const msg = ci.value.trim(); if (!msg) return;
+
+  // Deduct token
+  adState.tokens = Math.max(0, adState.tokens - 1);
+  saveAdState(adState);
+  updateTokenUI();
+
+  appendMsg(msg, 'user'); ci.value = '';
+  document.getElementById('ai-sugg').style.display = 'none';
+  STATE.chatHistory.push({ role: 'user', content: msg });
+  const ty = document.createElement('div');
+  ty.id = 'typing';
+  ty.style.cssText = 'display:flex;align-items:center;gap:5px;padding:11px 14px;background:#fff;border-radius:14px;width:fit-content;border:1px solid #EDE6F8;margin-bottom:4px;box-shadow:0 2px 6px rgba(107,47,160,.07);';
+  ty.innerHTML = `
+    <div style="width:7px;height:7px;border-radius:50%;background:#6B2FA0;animation:tybounce 1.2s infinite;"></div>
+    <div style="width:7px;height:7px;border-radius:50%;background:#6B2FA0;animation:tybounce 1.2s .2s infinite;"></div>
+    <div style="width:7px;height:7px;border-radius:50%;background:#6B2FA0;animation:tybounce 1.2s .4s infinite;"></div>`;
+  document.getElementById('chat-msgs').appendChild(ty);
+  scrollChat();
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+      body:JSON.stringify({
+        model:'llama-3.3-70b-versatile',
+        messages:[
+          {role:'system',content:'أنت مرشدة ذكية متخصصة في تعليم قيادة السيارات للجميع. أجيبي بالعربية بشكل واضح ومفيد ومشجع. استخدم الرموز التعبيرية بشكل معتدل.'},
+          ...STATE.chatHistory
+        ],
+        max_tokens:500
+      })
+    });
+    const data=await res.json();
+    const reply=data.choices?.[0]?.message?.content||'عذراً، حدث خطأ. حاول مجدداً.';
+    document.getElementById('typing')?.remove();
+    appendMsg(reply,'ai');
+    STATE.chatHistory.push({role:'assistant',content:reply});
+    if(STATE.chatHistory.length>20) STATE.chatHistory=STATE.chatHistory.slice(-20);
+  } catch(e) {
+    document.getElementById('typing')?.remove();
+    appendMsg('⚠️ تأكدي من اتصالك بالإنترنت وحاول مجدداً.','ai');
+  }
+};
+window.useSugg = function(btn) {
+  document.getElementById('ci').value = btn.textContent;
+  sendChat();
+};
+window.chatKey = function(e) {
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
+};
+function appendMsg(text, who) {
+  const cm=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  if(who==='ai'){
+    div.style.cssText='display:flex;gap:10px;align-items:flex-start;max-width:88%;align-self:flex-start;margin-bottom:4px;';
+    div.innerHTML=`
+      <div style="width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#6B2FA0,#8B1A3A);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px;">
+        <i class="fa-solid fa-robot" style="color:#fff;font-size:14px;"></i>
+      </div>
+      <div style="background:#fff;border-radius:4px 16px 16px 16px;padding:11px 13px;border:1px solid #EDE6F8;font-size:13px;color:#16052E;line-height:1.7;box-shadow:0 2px 8px rgba(107,47,160,.07);">${text.replace(/\n/g,'<br>')}</div>`;
+  } else {
+    div.style.cssText='align-self:flex-end;background:linear-gradient(135deg,#6B2FA0,#8B4CC0);border-radius:16px 4px 16px 16px;padding:11px 13px;color:#fff;font-size:13px;line-height:1.7;max-width:80%;margin-bottom:4px;';
+    div.textContent=text;
+  }
+  cm.appendChild(div); scrollChat();
+}
+function scrollChat(){const cm=document.getElementById('chat-msgs');cm.scrollTop=cm.scrollHeight;}
+
+// ═══════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════
+function renderProgress() {
+  if(!STATE.data) return;
+  const total=CHAPTERS.reduce((s,c)=>s+c.lessons.length,0);
+  const done=Object.keys(STATE.data.progress||{}).length;
+  const exams=STATE.data.examHistory||[];
+  const bestScore=exams.length?Math.max(...exams.map(e=>e.score)):0;
+  document.getElementById('prog-stats').innerHTML=`
+    <div class="sc"><div class="sc-ic"><i class="fa-solid fa-book-open"></i></div><div class="sc-v">${done}</div><div class="sc-l">درس مكتمل</div></div>
+    <div class="sc"><div class="sc-ic"><i class="fa-solid fa-bullseye"></i></div><div class="sc-v">${exams.length}</div><div class="sc-l">اختبار أجريتِه</div></div>
+    <div class="sc"><div class="sc-ic" style="background:rgba(245,158,11,.1)"><i class="fa-solid fa-trophy" style="color:var(--warn)"></i></div><div class="sc-v">${bestScore}%</div><div class="sc-l">أعلى نتيجة</div></div>
+    <div class="sc"><div class="sc-ic" style="background:rgba(139,26,58,.08)"><i class="fa-solid fa-chart-line" style="color:var(--m)"></i></div><div class="sc-v">${Math.round(done/total*100)}%</div><div class="sc-l">الإجمالي</div></div>`;
+  const hist=document.getElementById('exam-hist');
+  if(!exams.length){hist.innerHTML='<p style="color:var(--t3);font-size:13px;text-align:center;padding:28px;font-weight:600"><i class="fa-solid fa-clipboard-list" style="font-size:28px;display:block;margin-bottom:10px;opacity:.4"></i>لم تُجري أي اختبار بعد</p>';return;}
+  hist.innerHTML=exams.slice(0,10).map(e=>`
+    <div class="ehi">
+      <div class="ehs ${e.score>=70?'sp-c':'fl-c'}">${e.score}%</div>
+      <div style="flex:1"><div class="ehv">${e.correct} / ${e.total} إجابة صحيحة</div><div class="ehd"><i class="fa-regular fa-calendar" style="margin-left:4px"></i>${e.date} · <i class="fa-regular fa-clock" style="margin-right:4px"></i>${e.time}</div></div>
+      <i class="fa-solid ${e.score>=70?'fa-circle-check':'fa-circle-xmark'}" style="color:${e.score>=70?'var(--ok)':'var(--err)'};font-size:20px"></i>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════
+function renderProfile() {
+  if(!STATE.data) return;
+  const adState = getAdState();
+  const tokens  = adState.tokens || 0;
+  const watched = adState.watched || 0;
+  document.getElementById('pf-name').textContent  = STATE.data.name  || STATE.user?.displayName || 'مستخدمة';
+  document.getElementById('pf-email').textContent = STATE.user?.email || '';
+  document.getElementById('pf-plan').innerHTML    = `<i class="fa-solid fa-circle-play" style="color:#F59E0B"></i> ${tokens} طلب متبقٍ • ${watched}/${AD_MAX_DAILY} إعلانات اليوم`;
+}
+
+// ═══════════════════════════════════════
+// SUBSCRIPTION
+// ═══════════════════════════════════════
+window.pay = function(plan) {
+  toast('سيتم تفعيل بوابة الدفع قريباً — تواصلي معنا على واتساب 📱','ok');
+};
+
+// ═══════════════════════════════════════
+// LOCAL CACHE — فتح فوري بدون انتظار
+// ═══════════════════════════════════════
+const CACHE_KEY = 'qa_userdata_v1';
+
+function saveCache(data) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e){}
+}
+function loadCache() {
+  try { return JSON.parse(localStorage.getItem(CACHE_KEY)||'null'); } catch(e){ return null; }
+}
+function clearCache() {
+  try { localStorage.removeItem(CACHE_KEY); } catch(e){}
+}
+
+// تحميل البيانات المخزنة فوراً عند الفتح
+const cached = loadCache();
+if(cached && cached.uid) {
+  STATE.data = cached;
+  document.getElementById('h-name').textContent = cached.name || '—';
+  document.getElementById('pf-name').textContent = cached.name || '—';
+  document.getElementById('pf-email').textContent = cached.email || '—';
+}
+
+// INIT — لا تعرض onboarding لو في cache محفوظ
+setTimeout(()=>{
+  if(!auth.currentUser && !loadCache()) showView('onboarding');
+}, 2500);
+</script>
+</body>
+</html>
